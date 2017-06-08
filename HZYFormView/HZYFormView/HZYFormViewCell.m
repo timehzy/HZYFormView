@@ -76,6 +76,102 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
     return [_subViewTypeDict objectForKey:[NSNumber numberWithInteger:type]];
 }
 
+- (void)setContentValue:(id)value forOptions:(HZYFormViewCellOption)option {
+    UIView *subView = [self subViewForType:option];
+    NSAssert(subView, @"no such view in cell");
+    
+    switch (option) {
+        case HZYFormViewCellTitleIcon:
+        case HZYFormViewCellContentIndicator:
+            NSAssert([value isKindOfClass:[UIImage class]], @"value must be a UIImage object");
+            ((HZYFormImageView *)subView).image = value;
+            break;
+        case HZYFormViewCellContentCheckMark:
+            ((HZYFormButton *)subView).selected = [value boolValue];
+            break;
+        case HZYFormViewCellContentDatePickerAtoB:
+            self.startDate = value[HZYFormViewCellValueBeginDateKey];
+            self.endDate = value[HZYFormViewCellValueEndDateKey];
+            break;
+        case HZYFormViewCellContentDatePickerDefault:
+            self.startDate = value;
+            break;
+        case HZYFormViewCellContentSingleSelector:
+        case HZYFormViewCellContentMultiSelector:
+            self.selectList = value;
+            break;
+        case HZYFormViewCellContentSinglePhotoPicker:
+            if ([value isKindOfClass:[UIImage class]]) {
+                ((HZYFormImageView *)subView).image = value;
+            } else {
+                ((HZYFormImageView *)subView).url = value;
+            }
+            break;
+        case HZYFormViewCellTitleText:
+        case HZYFormViewCellContentDetail:
+        case HZYFormViewCellContentSubDetail:
+            NSAssert([value isKindOfClass:[NSString class]], @"value must be a NSString object");
+            ((HZYFormLabel*)subView).text = value;
+            break;
+        case HZYFormViewCellContentInputView:
+            NSAssert([value isKindOfClass:[NSString class]], @"value must be a NSString object");
+            ((HZYFormInputView*)subView).text = value;
+            break;
+        case HZYFormViewCellContentInputField:
+            NSAssert([value isKindOfClass:[NSString class]], @"value must be a NSString object");
+            ((HZYFormInputField*)subView).text = value;
+            break;
+        case HZYFormViewCellContentMultiPhotoPicker:
+            if ([[value firstObject]isKindOfClass:[UIImage class]]) {
+                ((HZYPicturePickerView *)subView).pictures = value;
+            }else{
+                ((HZYPicturePickerView *)subView).urls = value;
+            }
+            break;
+        case HZYFormViewCellContentActionButton:
+        case HZYFormViewCellContentCitySelector:
+            NSAssert(0, @"not support for set value in such view");
+            break;
+    }
+
+}
+
+- (id)getContentValueForOptions:(HZYFormViewCellOption)options {
+    UIView *subView = [self subViewForType:options];
+    NSAssert(subView, @"no such view in cell");
+    switch (options) {
+        case HZYFormViewCellTitleIcon:
+        case HZYFormViewCellContentIndicator:
+            return ((HZYFormImageView *)subView).image;
+        case HZYFormViewCellContentCheckMark:
+            return @(((HZYFormButton *)subView).isSelected);
+        case HZYFormViewCellContentSingleSelector:
+        case HZYFormViewCellContentMultiSelector:
+            return self.selectedArray;
+        case HZYFormViewCellContentSinglePhotoPicker:
+            return ((HZYFormImageView *)subView).value;
+        case HZYFormViewCellContentMultiPhotoPicker:
+            return ((HZYPicturePickerView *)subView).values;
+        case HZYFormViewCellContentDatePickerDefault:
+            return self.startDate;
+        case HZYFormViewCellContentDatePickerAtoB:
+            return @{HZYFormViewCellValueBeginDateKey : self.startDate,
+                     HZYFormViewCellValueEndDateKey : self.endDate};
+        case HZYFormViewCellTitleText:
+        case HZYFormViewCellContentDetail:
+        case HZYFormViewCellContentSubDetail:
+            return ((HZYFormLabel*)subView).text;
+        case HZYFormViewCellContentInputView:
+            return ((HZYFormInputView*)subView).value;
+        case HZYFormViewCellContentInputField:
+            return ((HZYFormInputField*)subView).text;
+        case HZYFormViewCellContentActionButton:
+        case HZYFormViewCellContentCitySelector:
+            NSAssert(0, @"not support for get value in such view");
+            return nil;
+    }
+}
+
 #pragma mark - action
 - (void)tapAction{
     if (self.tapHandler) {
@@ -300,6 +396,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
             }
             [self setTextForLabelOrInputView:str];
         }
+        self.selectedArray = indexList;
         indicator.highlighted = !indicator.isHighlighted;
     }];
 }

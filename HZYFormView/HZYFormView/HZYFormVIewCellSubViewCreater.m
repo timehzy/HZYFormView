@@ -26,7 +26,8 @@
 }
 
 #pragma mark - Private Method
-- (HZYFormViewCell *)createCellSubviews:(HZYFormViewCell *)view options:(HZYFormViewCellOption)options atSection:(NSUInteger)i row:(NSUInteger)j {
+- (HZYFormViewCell *)createCellSubviews:(HZYFormViewCell *)view atSection:(NSUInteger)i row:(NSUInteger)j {
+    HZYFormViewCellOption options = [self.dataModel.optionsArray[i][j] integerValue];
     //添加title
     if (options & HZYFormViewCellTitleText) {
         NSString *title;

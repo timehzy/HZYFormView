@@ -23,9 +23,6 @@ typedef NS_OPTIONS(NSUInteger, HZYFormViewCellOption) {
     HZYFormViewCellContentIndicator = 1 << 6,
     HZYFormViewCellContentSingleSelector = 1 << 7,
     HZYFormViewCellContentMultiSelector = 1 << 8,
-    HZYFormViewCellContentDatePickerDefault = 1 << 9,
-    HZYFormViewCellContentDatePickerAtoB = 1 << 10,
-    HZYFormViewCellContentCitySelector = 1 << 14,
     //👇这些最好单独使用
     HZYFormViewCellContentSinglePhotoPicker = 1 << 11,
     HZYFormViewCellContentMultiPhotoPicker = 1 << 12,
@@ -33,6 +30,11 @@ typedef NS_OPTIONS(NSUInteger, HZYFormViewCellOption) {
     //👇这些是标题类型，可以混用
     HZYFormViewCellTitleText = 1 << 30,
     HZYFormViewCellTitleIcon = 1 << 40,
+    
+    /* 未实现 */
+    HZYFormViewCellContentDatePickerDefault = 1 << 9,
+    HZYFormViewCellContentDatePickerAtoB = 1 << 10,
+    HZYFormViewCellContentCitySelector = 1 << 14,
 };
 
 @protocol HZYFormCellSubViewProtocol <NSObject>
@@ -43,6 +45,9 @@ typedef NS_OPTIONS(NSUInteger, HZYFormViewCellOption) {
 @end
 
 #define HZYFormCellHeight 46
+#define HZYFormViewCellBackgroundColor [UIColor whiteColor]
+#define HZYFormViewCellSeperatorColor [UIColor lightGrayColor]
+#define HZYFormViewCellSeperatorInsets UIEdgeInsetsMake(0, 16, 0, 0)
 #define HZYFormCellTitleFont [UIFont systemFontOfSize:16]
 #define HZYFormCellTitleColor [UIColor blackColor]
 #define HZYFormCellInputFieldFont [UIFont systemFontOfSize:16]

@@ -11,17 +11,40 @@
 #import "HZYFormSectionHeaderView.h"
 
 @implementation HZYFormViewDataModel
+- (instancetype)init {
+    if (self = [super init]) {
+        _cellSeperatorInsets = HZYFormViewCellSeperatorInsets;
+    }
+    return self;
+}
+
 - (NSMutableArray *)sectionRowHeightArray {
     if (!_sectionRowHeightArray) {
         _sectionRowHeightArray = [NSMutableArray array];
-        for (NSInteger i=0; i<_sectionRowCountArray.count; i++) {
+        [self enumateAllCellUsingSingleSectionBlock:^(NSInteger i) {
+            [_sectionRowHeightArray addObject:[NSNumber numberWithFloat:HZYFormCellHeight]];
+        } multiSectionBlock:^(NSInteger i) {
             [_sectionRowHeightArray addObject:[NSMutableArray array]];
+        } multiRowBlock:^(NSInteger i, NSInteger j) {
+            [_sectionRowHeightArray[i] addObject:[NSNumber numberWithFloat:HZYFormCellHeight]];
+        }];
+    }
+    return _sectionRowHeightArray;
+}
+
+- (void)enumateAllCellUsingSingleSectionBlock:(void(^)(NSInteger i))sblock multiSectionBlock:(void(^)(NSInteger i))mblock multiRowBlock:(void(^)(NSInteger i, NSInteger j))rblock{
+    if (self.sectionRowCountArray.count == 1) {
+        for (NSInteger i=0; i<self.sectionRowCountArray[0].integerValue; i++) {
+            if (sblock) sblock(i);
+        }
+    }else{
+        for (NSInteger i=0; i<_sectionRowCountArray.count; i++) {
+            if (mblock) mblock(i);
             for (NSInteger j=0; j<_sectionRowCountArray[i].integerValue; j++) {
-                [_sectionRowHeightArray[i] addObject:[NSNumber numberWithFloat:HZYFormCellHeight]];
+                if (rblock) rblock(i, j);
             }
         }
     }
-    return _sectionRowHeightArray;
 }
 
 - (NSMutableArray *)sectionHeaderHeightArray {
@@ -47,12 +70,13 @@
 - (NSMutableArray *)optionsArray {
     if (!_optionsArray) {
         _optionsArray = [NSMutableArray array];
-        for (NSInteger i=0; i<_sectionRowCountArray.count; i++) {
+        [self enumateAllCellUsingSingleSectionBlock:^(NSInteger i) {
+            [_optionsArray addObject:[NSNumber numberWithInteger:HZYFormViewCellTitleText | HZYFormViewCellContentInputField]];
+        } multiSectionBlock:^(NSInteger i) {
             [_optionsArray addObject:[NSMutableArray array]];
-            for (NSInteger j=0; j<_sectionRowCountArray[i].integerValue; j++) {
-                [_optionsArray[i] addObject:[NSNumber numberWithInteger:HZYFormViewCellTitleText | HZYFormViewCellContentInputField]];
-            }
-        }
+        } multiRowBlock:^(NSInteger i, NSInteger j) {
+            [_optionsArray[i] addObject:[NSNumber numberWithInteger:HZYFormViewCellTitleText | HZYFormViewCellContentInputField]];
+        }];
     }
     return _optionsArray;
 }
@@ -60,12 +84,13 @@
 - (NSMutableArray *)allCellTypeArray {
     if (!_allCellTypeArray) {
         _allCellTypeArray = [NSMutableArray array];
-        for (NSInteger i=0; i<_sectionRowCountArray.count; i++) {
+        [self enumateAllCellUsingSingleSectionBlock:^(NSInteger i) {
+            [_allCellTypeArray addObject:@"d"];
+        } multiSectionBlock:^(NSInteger i) {
             [_allCellTypeArray addObject:[NSMutableArray array]];
-            for (NSInteger j=0; j<_sectionRowCountArray[i].integerValue; j++) {
-                [_allCellTypeArray[i] addObject:@"d"];
-            }
-        }
+        } multiRowBlock:^(NSInteger i, NSInteger j) {
+            [_allCellTypeArray[i] addObject:@"d"];
+        }];
     }
     return _allCellTypeArray;
 }
@@ -101,6 +126,20 @@
         }
     }
     return _cellHideArray;
+}
+
+- (UIColor *)cellBackgroundColor {
+    if (!_cellBackgroundColor) {
+        _cellBackgroundColor = HZYFormViewCellBackgroundColor;
+    }
+    return _cellBackgroundColor;
+}
+
+- (UIColor *)cellSeperatorColor {
+    if (!_cellSeperatorColor) {
+        _cellSeperatorColor = HZYFormViewCellSeperatorColor;
+    }
+    return _cellSeperatorColor;
 }
 
 - (UIFont *)titleFont {

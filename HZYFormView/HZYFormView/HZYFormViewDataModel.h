@@ -39,4 +39,8 @@
 @property (nonatomic, strong) UIColor *detailTextColor;
 @property (nonatomic, strong) UIFont *subDetailFont;
 @property (nonatomic, strong) UIColor *subDetailTextColor;
+
+@property (nonatomic, strong) UIColor *cellBackgroundColor;
+@property (nonatomic, assign) UIEdgeInsets cellSeperatorInsets;
+@property (nonatomic, strong) UIColor *cellSeperatorColor;
 @end

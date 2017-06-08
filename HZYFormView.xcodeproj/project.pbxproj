@@ -204,6 +204,7 @@
 		4C7CB0C51EE8154B00F9737B /* HZYFormView */ = {
 			isa = PBXGroup;
 			children = (
+				4C7CB0D41EE8154B00F9737B /* HZYFormViewDefine.h */,
 				4C7CB0C61EE8154B00F9737B /* HZYDatePicker.h */,
 				4C7CB0C71EE8154B00F9737B /* HZYDatePicker.m */,
 				4C7CB0C81EE8154B00F9737B /* HZYFormSectionHeaderView.h */,
@@ -218,7 +219,6 @@
 				4C7CB0D11EE8154B00F9737B /* HZYFormViewCellSubViews.m */,
 				4C7CB0D21EE8154B00F9737B /* HZYFormViewDataModel.h */,
 				4C7CB0D31EE8154B00F9737B /* HZYFormViewDataModel.m */,
-				4C7CB0D41EE8154B00F9737B /* HZYFormViewDefine.h */,
 				4C7CB0D51EE8154B00F9737B /* HZYPicturePickerCell.h */,
 				4C7CB0D61EE8154B00F9737B /* HZYPicturePickerCell.m */,
 				4C7CB0D71EE8154B00F9737B /* HZYPicturePickerView.h */,

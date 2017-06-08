@@ -3,7 +3,7 @@
 //  CMM
 //
 //  Created by Melody_Zhy on 2016/12/19.
-//  Copyright © 2016年 zuozheng. All rights reserved.
+//  Copyright © 2016年 zhy. All rights reserved.
 //
 
 #import "MMSelectorView.h"

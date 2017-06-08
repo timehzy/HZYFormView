@@ -16,11 +16,16 @@
 - (UIView<HZYFormCellSubViewProtocol> *)subviewForStringTag:(NSString *)tag;
 - (UIView<HZYFormCellSubViewProtocol> *)subViewForType:(HZYFormViewCellOption)type;
 
+- (void)setContentValue:(id)value forOptions:(HZYFormViewCellOption)option;
+- (id)getContentValueForOptions:(HZYFormViewCellOption)options;
+
 @property (nonatomic, copy) void(^tapHandler)();
 @property (nonatomic, copy) NSString *stringTag;
 
 /// 当通过HZYFormView- (void)setContentValue: forCellAtIndexPath:方法设置selector类型的cell时，会为此属性赋值
 @property (nonatomic, copy) NSArray *selectList;
+/// 选择器选中的index数组
+@property (nonatomic, copy) NSArray *selectedArray;
 
 /// 如果使用AtoB日期选择器，则这两个参数有效，使用single日期选择器，则startDate有效
 @property (nonatomic, strong) NSDate *startDate;

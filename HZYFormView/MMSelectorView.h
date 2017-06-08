@@ -3,7 +3,7 @@
 //  CMM
 //
 //  Created by Melody_Zhy on 2016/12/19.
-//  Copyright © 2016年 zuozheng. All rights reserved.
+//  Copyright © 2016年 zhy. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -35,7 +35,7 @@ typedef void(^SelectorCancleDismissBlock)();
  *  显示选择弹框
  *
  *  @param animation  是否需要show和dismiss动画
- *  @param alertBlock 按钮点击回调
+ *  @param selectorBlock 按钮点击回调
  */
 - (void)showSelectorViewWithAnimation:(BOOL)animation alertBlock:(SelectorBlock)selectorBlock;
 
