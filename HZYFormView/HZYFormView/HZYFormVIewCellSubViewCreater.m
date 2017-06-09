@@ -26,8 +26,8 @@
 }
 
 #pragma mark - Private Method
-- (HZYFormViewCell *)createCellSubviews:(HZYFormViewCell *)view atSection:(NSUInteger)i row:(NSUInteger)j {
-    HZYFormViewCellOption options = [self.dataModel.optionsArray[i][j] integerValue];
+- (HZYFormViewCell *)createCellSubviews:(HZYFormViewCell *)cell accessory:(NSDictionary *)accessory atSection:(NSUInteger)i row:(NSUInteger)j {
+    HZYFormViewCellOption options = cell.options;
     //添加title
     if (options & HZYFormViewCellTitleText) {
         NSString *title;
@@ -35,7 +35,7 @@
             title = self.dataModel.titles[i][j];
         }
         HZYFormLabel *titleLabel = [self createTitleLabel:title];
-        [view addSubview:titleLabel];
+        [cell addSubview:titleLabel];
     }
     
     //以优先级倒序添加
@@ -43,11 +43,11 @@
         HZYFormImageView *indicator = [[HZYFormImageView alloc]initWithImage:[UIImage imageNamed:@"mm_right_indicator"]];
         indicator.contentMode = UIViewContentModeCenter;
         indicator.type = HZYFormViewCellContentIndicator;
-        [view addSubview:indicator];
+        [cell addSubview:indicator];
     }
-    if ([self.dataModel.cellAccessoryArray[i][j] objectForKey:HZYFormCellAccessoryActionButton]) {
-        HZYFormButton *actionBtn = [self.dataModel.cellAccessoryArray[i][j] objectForKey:HZYFormCellAccessoryActionButton];
-        [view addSubview:actionBtn];
+    if ([accessory objectForKey:HZYFormCellAccessoryActionButton]) {
+        HZYFormButton *actionBtn = [accessory objectForKey:HZYFormCellAccessoryActionButton];
+        [cell addSubview:actionBtn];
     }
     if (options & HZYFormViewCellContentCheckMark) {
         
@@ -71,11 +71,11 @@
         }else if (options & HZYFormViewCellContentCitySelector) {
             indicator.type = HZYFormViewCellContentCitySelector;
         }
-        [view addSubview:indicator];
+        [cell addSubview:indicator];
     }
     if (options & HZYFormViewCellContentMultiPhotoPicker) {
         HZYPicturePickerView *picPicker = [HZYPicturePickerView new];
-        picPicker.pickerDelegate = view;
+        picPicker.pickerDelegate = cell;
         picPicker.type = HZYFormViewCellContentMultiPhotoPicker;
         if (self.dataModel.pictures.count > i && [self.dataModel.pictures[i] count] > j) {
             if ([[self.dataModel.pictures[i][j] firstObject] isKindOfClass:[UIImage class]]) {
@@ -84,7 +84,7 @@
                 picPicker.urls = self.dataModel.pictures[i][j];
             }
         }
-        [view addSubview:picPicker];
+        [cell addSubview:picPicker];
     }
     if (options & HZYFormViewCellContentSinglePhotoPicker) {
         HZYFormImageView *imageView = [HZYFormImageView new];
@@ -95,16 +95,19 @@
             }else{
                 imageView.url = self.dataModel.pictures[i][j];
             }
+            if (self.dataModel.placeholders.count > i && [self.dataModel.placeholders[i] count] > j) {
+                imageView.placeholder = self.dataModel.placeholders[i][j];
+            }
         }
-        [view addSubview:imageView];
+        [cell addSubview:imageView];
     }
     if (options & HZYFormViewCellContentSubDetail) {
         HZYFormLabel *subDetail = [self createSubDetailLabel:self.dataModel.subDetails[i][j]];
-        [view addSubview:subDetail];
+        [cell addSubview:subDetail];
     }
     if (options & HZYFormViewCellContentDetail) {
         HZYFormLabel *detail = [self createDetailLabel:self.dataModel.details[i][j]];
-        [view addSubview:detail];
+        [cell addSubview:detail];
     }
     if (options & HZYFormViewCellContentInputField) {
         NSString *inputText;
@@ -118,7 +121,7 @@
             placeholder = [NSString stringWithFormat:@"请输入%@", self.dataModel.titles[i][j]];
         }
         HZYFormInputField *inputField = [self createInputField:placeholder text:inputText];
-        [view addSubview:inputField];
+        [cell addSubview:inputField];
     }
     if (options & HZYFormViewCellContentInputView) {
         HZYFormInputView *inputView = [HZYFormInputView new];
@@ -133,11 +136,11 @@
         if (self.dataModel.inputTexts.count > 0) {
             inputView.text = self.dataModel.inputTexts[i][j];
         }
-        [view addSubview:inputView];
+        [cell addSubview:inputView];
     }
     
-    [view layoutFormViews];
-    return view;
+    [cell layoutFormViews];
+    return cell;
 }
 
 

@@ -22,8 +22,7 @@
 
 - (void)formViewDemo {
     HZYFormView *formView = [HZYFormView formViewWithFrame:self.view.bounds sectionRows:@[@1]];
-    formView.titles = @[@[@"hhaha"]];
-    [formView configComplete];
+    formView.titles = @[@"hhaha"];
     [self.view addSubview:formView];
 }
 @end

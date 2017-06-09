@@ -35,5 +35,7 @@
 @property (nonatomic, assign, getter=isVisible) BOOL visible;
 @property (nonatomic, assign) BOOL shouldShowAnimation;
 
+@property (nonatomic, assign) HZYFormViewCellOption options;
+
 @end
 

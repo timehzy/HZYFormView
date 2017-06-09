@@ -7,18 +7,21 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HZYFormViewDefine.h"
 
+@class HZYFormViewCell;
+@class HZYFormSectionHeaderView;
 @interface HZYFormViewDataModel : NSObject
-@property (nonatomic, copy) NSArray *cellArray;
-@property (nonatomic, copy) NSArray<NSNumber *> *sectionRowCountArray;
-@property (nonatomic, strong) NSMutableArray<NSNumber *> *sectionHeaderHeightArray;
-@property (nonatomic, strong) NSMutableArray *sectionHeaderViewArray;
-@property (nonatomic, strong) NSMutableArray *sectionRowHeightArray;
-@property (nonatomic, strong) NSMutableArray *cellAccessoryArray;
-@property (nonatomic, strong) NSMutableArray *cellHideArray;
-@property (nonatomic, strong) NSMutableDictionary *customCellDictionary;
-@property (nonatomic, strong) NSMutableArray *allCellTypeArray;//d:默认 c:自定义
-@property (nonatomic, strong) NSMutableArray *optionsArray;
+
+- (void)setCell:(HZYFormViewCell *)cell forRow:(NSUInteger)row inSection:(NSUInteger)section;
+- (HZYFormViewCell *)getCellForRow:(NSUInteger)row inSection:(NSUInteger)section;
+
+- (void)setSectionRowCount:(NSArray *)array;
+- (NSUInteger)getRowCountInSection:(NSUInteger)section;
+- (NSUInteger)getSectionCount;
+
+- (void)setSectionHeaderView:(UIView *)view forSection:(NSUInteger)section;
+- (HZYFormSectionHeaderView *)getSectionHeaderViewForSection:(NSUInteger)section;
 
 @property (nonatomic, copy) NSArray *titles;
 @property (nonatomic, copy) NSArray *placeholders;
@@ -27,7 +30,6 @@
 @property (nonatomic, copy) NSArray *subDetails;
 @property (nonatomic, copy) NSArray *pictures;
 @property (nonatomic, copy) NSArray *checkmarks;//@0=normal,@1=selected，@2=disable
-
 
 @property (nonatomic, strong) UIFont *titleFont;
 @property (nonatomic, strong) UIColor *titleColor;

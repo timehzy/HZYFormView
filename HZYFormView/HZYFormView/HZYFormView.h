@@ -46,7 +46,7 @@
 - (HZYFormViewCell *)cellAtIndexPath:(NSIndexPath *)indexPath;
 - (NSArray<HZYFormViewCell *> *)visibleCells;
 // 必须传一个二维数组，例如要隐藏第1个section的第2、3个cell、第3个section的第1个cell、第4个section的全部cell，则传@[@[@1, @2], @[], @[@0], @[@-1]]
-- (void)hide:(BOOL)hidden Cell:(NSArray *)sectionRowArray animate:(BOOL)animate;
+- (void)hide:(BOOL)hidden cellAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths animate:(BOOL)animate;
 
 #pragma mark - section
 /// 设置section headerView。section传nil可以统一设置所有section
