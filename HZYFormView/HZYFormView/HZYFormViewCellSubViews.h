@@ -33,12 +33,10 @@
 @property (nonatomic, copy) NSString *url;
 @property (nonatomic, assign) BOOL didSetImage;
 @property (nonatomic, readonly) id value;
-
 @end
 
 @interface HZYFormInputView : UITextView<HZYFormCellSubViewProtocol>
 @property (nonatomic, assign) HZYFormViewCellOption type;
 @property (nonatomic, copy) NSString *placeholder;
 @property (nonatomic, readonly) NSString *value;
-
 @end

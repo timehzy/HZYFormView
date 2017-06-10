@@ -43,19 +43,11 @@
 }
 
 - (void)setCell:(HZYFormViewCell *)cell forRow:(NSUInteger)row inSection:(NSUInteger)section {
-    if (self.isSingleSection) {
-        self.cellArray[row] = cell;
-    }else{
-        self.cellArray[section][row] = cell;
-    }
+    self.cellArray[section][row] = cell;
 }
 
 - (HZYFormViewCell *)getCellForRow:(NSUInteger)row inSection:(NSUInteger)section {
-    if (self.isSingleSection) {
-        return self.cellArray[row];
-    }else{
-        return self.cellArray[section][row];
-    }
+    return self.cellArray[section][row];
 }
 
 - (void)setSectionHeaderView:(UIView *)view forSection:(NSUInteger)section {
@@ -64,6 +56,16 @@
 
 - (HZYFormSectionHeaderView *)getSectionHeaderViewForSection:(NSUInteger)section {
     return self.sectionHeaderViewArray[section];
+}
+
+- (NSMutableArray *)cellArray {
+    if (!_cellArray) {
+        _cellArray = [NSMutableArray array];
+        for (NSInteger i=0; i<[self getSectionCount]; i++) {
+            [_cellArray addObject:[NSMutableArray array]];
+        }
+    }
+    return _cellArray;
 }
 
 - (NSMutableArray *)sectionHeaderViewArray {

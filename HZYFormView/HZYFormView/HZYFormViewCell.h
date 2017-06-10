@@ -11,6 +11,8 @@
 #import "HZYFormViewCellSubViews.h"
 #import "HZYFormViewDefine.h"
 
+extern NSInteger const HZYFormCellSeperatorTag;
+
 @interface HZYFormViewCell : UIView<HZYPicturePickerViewDelegate>
 - (void)layoutFormViews;
 - (UIView<HZYFormCellSubViewProtocol> *)subviewForStringTag:(NSString *)tag;
@@ -38,5 +40,6 @@
 
 @property (nonatomic, assign) HZYFormViewCellOption options;
 
+@property (nonatomic, weak) UIView *seperator;
 @end
 

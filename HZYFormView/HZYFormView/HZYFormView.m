@@ -281,7 +281,7 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
         lastCellMaxY += HZYFormViewSectionHeaderHeight;
         //添加cell
         for (NSInteger j=0; j<[self.dataModel getRowCountInSection:i]; j++) {
-            HZYFormViewCell *view = [self createCell:lastCellMaxY cellHeight:HZYFormCellHeight withSperatLine:YES isSectionLast:j == [self.dataModel getRowCountInSection:i]];
+            HZYFormViewCell *view = [self createCell:lastCellMaxY cellHeight:HZYFormCellHeight];
             view = [self.cellSubviewCreater createCellSubviews:view accessory:nil atSection:i row:j];
             __weak typeof(view)weakView = view;
             __weak typeof(self)weakSelf = self;
@@ -335,17 +335,10 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     [self reLayout:YES];
 }
 
-- (HZYFormViewCell *)createCell:(CGFloat)cellY cellHeight:(CGFloat)cellHeight withSperatLine:(BOOL)hasSep isSectionLast:(BOOL)isSectionLast{
+- (HZYFormViewCell *)createCell:(CGFloat)cellY cellHeight:(CGFloat)cellHeight{
     HZYFormViewCell *view = [[HZYFormViewCell alloc]initWithFrame:CGRectMake(0, cellY, self.bounds.size.width, cellHeight)];
     view.shouldShowAnimation = self.cellShowAnimation;
-    view.backgroundColor = [UIColor whiteColor];
-    if (hasSep && !isSectionLast) {
-        CALayer *sep = [CALayer layer];
-        UIEdgeInsets insets = self.dataModel.cellSeperatorInsets;
-        sep.frame = CGRectMake(isSectionLast ? 0 : insets.left, cellHeight - (insets.bottom + 0.5), view.bounds.size.width - insets.left - insets.right, 0.5);
-        sep.backgroundColor = self.dataModel.cellSeperatorColor.CGColor;
-        [view.layer addSublayer:sep];
-    }
+    view.backgroundColor = HZYFormViewCellBackgroundColor;
     [self addSubview:view];
     return view;
 }
@@ -397,7 +390,7 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
 - (void)reCreateCellAtIndexPath:(NSIndexPath *)indexPath {
     //重新创建这个cell
     HZYFormViewCell *cell = [self.dataModel getCellForRow:indexPath.row inSection:indexPath.section];
-    cell = [self createCell:cell.frame.origin.y cellHeight:cell.frame.size.height withSperatLine:YES isSectionLast:indexPath.row == [self.dataModel getRowCountInSection:indexPath.section] - 1];
+    cell = [self createCell:cell.frame.origin.y cellHeight:cell.frame.size.height];
     cell = [self.cellSubviewCreater createCellSubviews:cell accessory:nil atSection:indexPath.section row:indexPath.row];
     [self.dataModel setCell:cell forRow:indexPath.row inSection:indexPath.section];
 }
@@ -492,7 +485,7 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     for (NSInteger i=0; i<titles.count; i++) {
         for (NSInteger j=0; j<[titles[i] count]; j++) {
             [self setContentValue:titles[i][j] forCellOptions:HZYFormViewCellTitleText atIndexPath:[NSIndexPath indexPathForRow:j inSection:i]];
-            
+            [[self.dataModel getCellForRow:j inSection:i] layoutIfNeeded];
         }
     }
 }
@@ -502,8 +495,8 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     self.dataModel.placeholders = placeholders;
     for (NSInteger i=0; i<placeholders.count; i++) {
         for (NSInteger j=0; j<[placeholders[i] count]; j++) {
-            [self setPlaceholder:placeholders[i][j] forCellOptions:HZYFormViewCellContentInputField | HZYFormViewCellContentInputView atIndexPath:[NSIndexPath indexPathForRow:j inSection:i]];
-            
+            [self setPlaceholder:placeholders[i][j] forCellOptions:HZYFormViewCellContentInputView atIndexPath:[NSIndexPath indexPathForRow:j inSection:i]];
+            [self setPlaceholder:placeholders[i][j] forCellOptions:HZYFormViewCellContentInputField atIndexPath:[NSIndexPath indexPathForRow:j inSection:i]];            
         }
     }
 }
@@ -513,7 +506,8 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     self.dataModel.inputTexts = inputTexts;
     for (NSInteger i=0; i<inputTexts.count; i++) {
         for (NSInteger j=0; j<[inputTexts[i] count]; j++) {
-            [self setContentValue:inputTexts[i][j] forCellOptions:HZYFormViewCellContentInputField | HZYFormViewCellContentInputView atIndexPath:[NSIndexPath indexPathForRow:j inSection:i]];
+            [self setContentValue:inputTexts[i][j] forCellOptions:HZYFormViewCellContentInputField atIndexPath:[NSIndexPath indexPathForRow:j inSection:i]];
+            [self setContentValue:inputTexts[i][j] forCellOptions:HZYFormViewCellContentInputView atIndexPath:[NSIndexPath indexPathForRow:j inSection:i]];
         }
     }
 }
@@ -541,6 +535,11 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
 - (void)setPictures:(NSArray *)pictures {
     _pictures = pictures.copy;
     self.dataModel.pictures = pictures;
+    for (NSInteger i=0; i<pictures.count; i++) {
+        for (NSInteger j=0; j<[pictures[i] count]; j++) {
+            [self setContentValue:pictures[i][j] forCellOptions:HZYFormViewCellContentSinglePhotoPicker | HZYFormViewCellContentMultiPhotoPicker atIndexPath:[NSIndexPath indexPathForRow:j inSection:i]];
+        }
+    }
 }
 
 - (void)setCheckmarks:(NSArray *)checkmarks {
@@ -550,54 +549,94 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
 
 - (void)setCellBackgroundColor:(UIColor *)color {
     self.dataModel.cellBackgroundColor = color;
+    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        cell.backgroundColor = color;
+    }];
 }
 
 - (void)setCellSeperatorColor:(UIColor *)color {
     self.dataModel.cellSeperatorColor = color;
+    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        cell.seperator.backgroundColor = color;
+    }];
 }
 
 - (void)setCellSeperatorInsets:(UIEdgeInsets)insets {
     self.dataModel.cellSeperatorInsets = insets;
+    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        cell.seperator.frame = CGRectMake(insets.left, cell.frame.size.height - 0.5, cell.frame.size.width - insets.left, 0.5);
+    }];
 }
 
 - (void)setTitleFont:(UIFont *)titleFont {
     self.dataModel.titleFont = titleFont;
+    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        ((HZYFormLabel *)[cell subViewForType:HZYFormViewCellTitleText]).font = titleFont;
+    }];
 }
 
 - (void)setTitleColor:(UIColor *)titleColor {
     self.dataModel.titleColor = titleColor;
+    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        ((HZYFormLabel *)[cell subViewForType:HZYFormViewCellTitleText]).textColor = titleColor;
+    }];
 }
 
 - (void)setInputFieldFont:(UIFont *)inputFieldFont {
     self.dataModel.inputFieldFont = inputFieldFont;
+    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        ((HZYFormInputField *)[cell subViewForType:HZYFormViewCellContentInputField]).font = inputFieldFont;
+
+    }];
 }
 
 - (void)setInputFieldTextColor:(UIColor *)inputFieldTextColor {
     self.dataModel.inputFieldTextColor = inputFieldTextColor;
+    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        ((HZYFormInputField *)[cell subViewForType:HZYFormViewCellContentInputField]).textColor = inputFieldTextColor;
+    }];
 }
 
 - (void)setInputViewFont:(UIFont *)inputViewFont {
     self.dataModel.inputViewFont = inputViewFont;
+    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        ((HZYFormInputView *)[cell subViewForType:HZYFormViewCellContentInputView]).font = inputViewFont;
+    }];
 }
 
 - (void)setInputViewTextColor:(UIColor *)inputViewTextColor {
     self.dataModel.inputViewTextColor = inputViewTextColor;
+    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        ((HZYFormInputView *)[cell subViewForType:HZYFormViewCellContentInputView]).textColor = inputViewTextColor;
+    }];
 }
 
 - (void)setDetailFont:(UIFont *)detailFont {
     self.dataModel.detailFont = detailFont;
+    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        ((HZYFormLabel *)[cell subViewForType:HZYFormViewCellContentDetail]).font = detailFont;
+    }];
 }
 
 - (void)setDetailTextColor:(UIColor *)detailTextColor {
     self.dataModel.detailTextColor = detailTextColor;
+    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        ((HZYFormLabel *)[cell subViewForType:HZYFormViewCellContentDetail]).textColor = detailTextColor;
+    }];
 }
 
 - (void)setSubDetailFont:(UIFont *)subDetailFont {
     self.dataModel.subDetailFont = subDetailFont;
+    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        ((HZYFormLabel *)[cell subViewForType:HZYFormViewCellContentSubDetail]).font = subDetailFont;
+    }];
 }
 
 - (void)setSubDetailTextColor:(UIColor *)subDetailTextColor {
     self.dataModel.subDetailTextColor = subDetailTextColor;
+    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        ((HZYFormLabel *)[cell subViewForType:HZYFormViewCellContentSubDetail]).textColor = subDetailTextColor;
+    }];
 }
 @end
 

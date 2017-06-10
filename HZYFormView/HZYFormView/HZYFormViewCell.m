@@ -16,6 +16,7 @@ NSString *const HZYFormCellNewAddedImageCellTitleKey = @"HZYFomeCellNewAddedImag
 NSString *const HZYFormCellNewAddedImageIndexKey = @"HZYFormCellNewAddedImageIndexKey";
 NSString *const HZYFormCellDeletedImageIndexKey = @"HZYFormCellDeletedImageIndexKey";
 NSString *const HZYFormCellDeletedImageRemainCountKey = @"HZYFormCellDeletedImageRemainCountKey";
+NSInteger const HZYFormCellSeperatorTag = 3313;
 
 NSNotificationName const HZYFormCellImageDidAddedNotification = @"HZYFormCellImageDidAddedNotification";
 NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellImageDidDeletedNotification";
@@ -39,26 +40,6 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
     return self;
 }
 
-- (void)layoutMultiSubViews {
-    for (NSInteger i=0; i<self.subviews.count; i++) {
-        UIView<HZYFormCellSubViewProtocol> *view = self.subviews[i];
-        if (![view conformsToProtocol:@protocol(HZYFormCellSubViewProtocol)]) {
-            continue;
-        }
-        if (view.type & HZYFormViewCellTitleIcon) {
-            [self layoutTitleIcon:view];
-        }else if (view.type & HZYFormViewCellTitleText) {
-            [self layoutTitleText:view];
-        }else if (view.type & HZYFormViewCellContentSinglePhotoPicker) {
-            [self layoutSinglgPhotoPicker:view];
-        }else if (view.type & HZYFormViewCellContentMultiPhotoPicker) {
-            [self layoutMultiPhotoPicker:view];
-        }else{
-            [self layoutOthersView:view atIndex:i];
-        }
-    }
-}
-
 #pragma mark - public
 - (void)layoutFormViews {
     if (self.subviews.count == 1) {
@@ -66,6 +47,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
     }else{
         [self layoutMultiSubViews];
     }
+    [self layoutSeperator];
     [self disableInputFieldInSelector];
 }
 
@@ -79,8 +61,9 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 
 - (void)setContentValue:(id)value forOptions:(HZYFormViewCellOption)option {
     UIView *subView = [self subViewForType:option];
-    NSAssert(subView, @"no such view in cell");
-    
+    if (!subView) {
+        return;
+    }
     switch (option) {
         case HZYFormViewCellTitleIcon:
         case HZYFormViewCellContentIndicator:
@@ -138,7 +121,6 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 
 - (id)getContentValueForOptions:(HZYFormViewCellOption)options {
     UIView *subView = [self subViewForType:options];
-    NSAssert(subView, @"no such view in cell");
     switch (options) {
         case HZYFormViewCellTitleIcon:
         case HZYFormViewCellContentIndicator:
@@ -174,7 +156,9 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 
 - (void)setPlaceholder:(id)value forOptions:(HZYFormViewCellOption)options {
     UIView *subView = [self subViewForType:options];
-    NSAssert(subView, @"no such view in cell");
+    if (!subView) {
+        return;
+    }
     switch (options) {
         case HZYFormViewCellContentDatePickerAtoB:
             self.startDate = value[HZYFormViewCellValueBeginDateKey];
@@ -259,8 +243,11 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 
 #pragma mark - override
 - (void)addSubview:(UIView<HZYFormCellSubViewProtocol> *)view {
-    NSAssert([view conformsToProtocol:@protocol(HZYFormCellSubViewProtocol)], @"【HZYFormView Warning】: form cell's subview must conforms protocol : \"HZYFormCellSubViewProtocol\"");
+    NSAssert(view.tag == 3313 || [view conformsToProtocol:@protocol(HZYFormCellSubViewProtocol)], @"【HZYFormView Warning】: form cell's subview must conforms protocol : \"HZYFormCellSubViewProtocol\"");
     [super addSubview:view];
+    if (view.tag == HZYFormCellSeperatorTag) {
+        return;
+    }
     [_subViewTypeDict setObject:view forKey:[NSNumber numberWithInteger:view.type]];
     if (view.type & HZYFormViewCellContentMultiPhotoPicker) {
         self.tapGesture.enabled = NO;
@@ -277,6 +264,26 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
     }];
 }
 
+- (void)layoutMultiSubViews {
+    for (NSInteger i=0; i<self.subviews.count; i++) {
+        UIView<HZYFormCellSubViewProtocol> *view = self.subviews[i];
+        if (![view conformsToProtocol:@protocol(HZYFormCellSubViewProtocol)]) {
+            continue;
+        }
+        if (view.type & HZYFormViewCellTitleIcon) {
+            [self layoutTitleIcon:view];
+        }else if (view.type & HZYFormViewCellTitleText) {
+            [self layoutTitleText:view];
+        }else if (view.type & HZYFormViewCellContentSinglePhotoPicker) {
+            [self layoutSinglgPhotoPicker:view];
+        }else if (view.type & HZYFormViewCellContentMultiPhotoPicker) {
+            [self layoutMultiPhotoPicker:view];
+        }else{
+            [self layoutOthersView:view atIndex:i];
+        }
+    }
+}
+
 - (void)layoutTitleIcon:(UIView *)view {
     [view mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(self).offset(16);
@@ -286,20 +293,19 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 }
 
 - (void)layoutTitleText:(UIView *)view {
-    CGSize size = [self sizeWithText:((HZYFormLabel *)view).text font:((HZYFormLabel *)view).font maxSize:CGSizeMake(MAXFLOAT, self.bounds.size.height)];
     if ([self subViewForType:HZYFormViewCellContentSinglePhotoPicker]) {
         [view mas_makeConstraints:^(MASConstraintMaker *make) {
             make.leading.equalTo(self).offset(16);
             make.top.equalTo(self).offset(12);
-            make.width.equalTo([NSNumber numberWithFloat:size.width + 1]);
         }];
+        [view setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
     }else{
         [view mas_makeConstraints:^(MASConstraintMaker *make) {
             make.leading.equalTo(self).offset(16);
             make.top.equalTo(self);
             make.bottom.equalTo(self);
-            make.width.equalTo([NSNumber numberWithFloat:size.width + 1]);
         }];
+        [view setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
     }
 }
 
@@ -360,6 +366,15 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
     
 }
 
+- (void)layoutSeperator {
+    UIView *sep = [UIView new];
+    sep.tag = HZYFormCellSeperatorTag;
+    UIEdgeInsets insets = HZYFormCellSeperatorInsets;
+    sep.frame = CGRectMake(insets.left, self.frame.size.height - (insets.bottom + 0.5), self.bounds.size.width - insets.left - insets.right, 0.5);
+    sep.backgroundColor = HZYFormCellSeperatorColor;
+    [self addSubview:sep];
+    self.seperator = sep;
+}
 
 - (void)disableInputFieldInSelector {
     if ([self subViewForType:HZYFormViewCellContentCitySelector] ||
