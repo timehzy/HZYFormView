@@ -95,9 +95,9 @@
             }else{
                 imageView.url = self.dataModel.pictures[i][j];
             }
-            if (self.dataModel.placeholders.count > i && [self.dataModel.placeholders[i] count] > j) {
-                imageView.placeholder = self.dataModel.placeholders[i][j];
-            }
+        }
+        if (self.dataModel.placeholders.count > i && [self.dataModel.placeholders[i] count] > j) {
+            imageView.placeholder = self.dataModel.placeholders[i][j];
         }
         [cell addSubview:imageView];
     }
@@ -115,7 +115,7 @@
         if (self.dataModel.inputTexts.count > 0) {
             inputText = self.dataModel.inputTexts[i][j];
         }
-        if (self.dataModel.placeholders.count > i && [self.dataModel.placeholders[i] count] > j) {
+        if (self.dataModel.placeholders.count > i && [self.dataModel.placeholders[i] count] > j && [self.dataModel.placeholders[i][j] isKindOfClass:[NSString class]]) {
             placeholder = self.dataModel.placeholders[i][j];
         }
         HZYFormInputField *inputField = [self createInputField:placeholder text:inputText];

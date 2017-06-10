@@ -53,9 +53,13 @@
 - (void)setHeaderHeight:(CGFloat)height forSection:(NSArray<NSNumber *> *)section;
 /// 设置默认header的title和content，默认的headerView具有左右两个label
 - (void)setHeaderTitle:(NSString *)title content:(NSString *)content forSection:(NSUInteger)section;
+/// 设置headerView，section传nil可以设置全部
 - (void)setHeaderView:(UIView *)view forSection:(NSArray<NSNumber *> *)section;
 - (UIView *)headerViewForSection:(NSUInteger)section;
+
+/// 整个form的headerView
 @property (nonatomic, strong) UIView *headerView;
+/// 整个form的footerView
 @property (nonatomic, strong) UIView *footerView;
 
 #pragma mark - cell's value

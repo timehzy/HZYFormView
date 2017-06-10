@@ -94,70 +94,70 @@
 
 - (UIFont *)titleFont {
     if (!_titleFont) {
-        _titleFont = HZYFormCellTitleFont;
+        _titleFont = HZYFormViewCellTitleFont;
     }
     return _titleFont;
 }
 
 - (UIColor *)titleColor {
     if (!_titleColor) {
-        _titleColor = HZYFormCellTitleColor;
+        _titleColor = HZYFormViewCellTitleColor;
     }
     return _titleColor;
 }
 
 - (UIFont *)inputFieldFont {
     if (!_inputFieldFont) {
-        _inputFieldFont = HZYFormCellInputFieldFont;
+        _inputFieldFont = HZYFormViewCellInputFieldFont;
     }
     return _inputFieldFont;
 }
 
 - (UIColor *)inputFieldTextColor {
     if (!_inputFieldTextColor) {
-        _inputFieldTextColor = HZYFormCellInputFieldTextColor;
+        _inputFieldTextColor = HZYFormViewCellInputFieldTextColor;
     }
     return _inputFieldTextColor;
 }
 
 - (UIFont *)inputViewFont {
     if (!_inputViewFont) {
-        _inputViewFont = HZYFormCellInputViewFont;
+        _inputViewFont = HZYFormViewCellInputViewFont;
     }
     return _inputViewFont;
 }
 
 - (UIColor *)inputViewTextColor {
     if (!_inputViewTextColor) {
-        _inputViewTextColor = HZYFormCellInputViewTextColor;
+        _inputViewTextColor = HZYFormViewCellInputViewTextColor;
     }
     return _inputViewTextColor;
 }
 
 - (UIFont *)detailFont {
     if (!_detailFont) {
-        _detailFont = HZYFormCellDetailFont;
+        _detailFont = HZYFormViewCellDetailFont;
     }
     return _detailFont;
 }
 
 - (UIColor *)detailTextColor {
     if (!_detailTextColor) {
-        _detailTextColor = HZYFormCellDetailTextColor;
+        _detailTextColor = HZYFormViewCellDetailTextColor;
     }
     return _detailTextColor;
 }
 
 - (UIFont *)subDetailFont {
     if (!_subDetailFont) {
-        _subDetailFont = HZYFormCellSubDetailFont;
+        _subDetailFont = HZYFormViewCellSubDetailFont;
     }
     return _subDetailFont;
 }
 
 - (UIColor *)subDetailTextColor {
     if (!_subDetailTextColor) {
-        _subDetailTextColor = HZYFormCellSubDetailTextColor;
+        _subDetailTextColor = HZYFormViewCellSubDetailTextColor;
     }
     return _subDetailTextColor;
 }

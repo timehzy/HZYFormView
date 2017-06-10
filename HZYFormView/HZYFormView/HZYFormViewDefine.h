@@ -44,24 +44,24 @@ typedef NS_OPTIONS(NSUInteger, HZYFormViewCellOption) {
 @property (nonatomic, assign) CGFloat width;
 @end
 
-#define HZYFormCellHeight 46
-#define HZYFormViewSectionHeaderHeight 20
+#define HZYFormViewDefaultBackgroundColor [UIColor colorWithRed:235/255.0 green:235/255.0 blue:241/255.0 alpha:1/1.0]
+#define HZYFormViewCellHeight 46
+#define HZYFormViewSectionHeaderHeight 10
 #define HZYFormViewCellOptions HZYFormViewCellTitleText | HZYFormViewCellContentInputField
 #define HZYFormViewCellBackgroundColor [UIColor whiteColor]
-#define HZYFormViewCellSeperatorColor [UIColor lightGrayColor]
 #define HZYFormViewCellSeperatorInsets UIEdgeInsetsMake(0, 16, 0, 0)
-#define HZYFormCellTitleFont [UIFont systemFontOfSize:16]
-#define HZYFormCellTitleColor [UIColor blackColor]
-#define HZYFormCellInputFieldFont [UIFont systemFontOfSize:16]
-#define HZYFormCellInputFieldTextColor [UIColor blackColor]
-#define HZYFormCellInputViewFont [UIFont systemFontOfSize:16]
-#define HZYFormCellInputViewTextColor [UIColor blackColor]
-#define HZYFormCellDetailTextColor [UIColor blackColor]
-#define HZYFormCellDetailFont [UIFont systemFontOfSize:16]
-#define HZYFormCellSubDetailTextColor [UIColor blueColor]
-#define HZYFormCellSubDetailFont [UIFont systemFontOfSize:16]
-#define HZYFormCellSeperatorInsets UIEdgeInsetsMake(0, 16, 0, 0)
-#define HZYFormCellSeperatorColor [UIColor colorWithRed:221/255.0 green:221/255.0 blue:221/255.0 alpha:1/1.0]
+#define HZYFormViewCellTitleFont [UIFont systemFontOfSize:16]
+#define HZYFormViewCellTitleColor [UIColor blackColor]
+#define HZYFormViewCellInputFieldFont [UIFont systemFontOfSize:16]
+#define HZYFormViewCellInputFieldTextColor [UIColor blackColor]
+#define HZYFormViewCellInputViewFont [UIFont systemFontOfSize:16]
+#define HZYFormViewCellInputViewTextColor [UIColor blackColor]
+#define HZYFormViewCellDetailTextColor [UIColor blackColor]
+#define HZYFormViewCellDetailFont [UIFont systemFontOfSize:16]
+#define HZYFormViewCellSubDetailTextColor [UIColor blueColor]
+#define HZYFormViewCellSubDetailFont [UIFont systemFontOfSize:16]
+#define HZYFormViewCellSeperatorInsets UIEdgeInsetsMake(0, 16, 0, 0)
+#define HZYFormViewCellSeperatorColor [UIColor colorWithRed:221/255.0 green:221/255.0 blue:221/255.0 alpha:1/1.0]
 
 /* cell accessory key */
 extern NSString *const HZYFormCellAccessoryActionButton;//用于为cell添加按钮，这个按钮将出现在cell末端，必须使用HZYFormButton, 设置width属性以保证布局正确

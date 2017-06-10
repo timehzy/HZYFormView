@@ -200,14 +200,14 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 
 #pragma mark - action
 - (void)tapAction{
+//    [self cancleAlertStyle];
+    [self photoPickerAction];
+//    [self selectorAction];
+//    [self citySelectorAction];
+//    [self datePickerDefalutAction];
+//    [self datePickerAtoBAction];
     if (self.tapHandler) {
-        self.tapHandler();
-        [self cancleAlertStyle];
-        [self photoPickerAction];
-        [self selectorAction];
-        [self citySelectorAction];
-        [self datePickerDefalutAction];
-        [self datePickerAtoBAction];
+//        self.tapHandler();
     }
 }
 
@@ -369,9 +369,9 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 - (void)layoutSeperator {
     UIView *sep = [UIView new];
     sep.tag = HZYFormCellSeperatorTag;
-    UIEdgeInsets insets = HZYFormCellSeperatorInsets;
+    UIEdgeInsets insets = HZYFormViewCellSeperatorInsets;
     sep.frame = CGRectMake(insets.left, self.frame.size.height - (insets.bottom + 0.5), self.bounds.size.width - insets.left - insets.right, 0.5);
-    sep.backgroundColor = HZYFormCellSeperatorColor;
+    sep.backgroundColor = HZYFormViewCellSeperatorColor;
     [self addSubview:sep];
     self.seperator = sep;
 }
