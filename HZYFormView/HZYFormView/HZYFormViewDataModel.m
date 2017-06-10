@@ -34,7 +34,7 @@
     }
 }
 - (NSUInteger)getRowCountInSection:(NSUInteger)section {
-    NSAssert(section < self.sectionRowCountArray.count - 1, @"【HZYFormView Warning】: section index should not greater than section count");
+    NSAssert(section <= self.sectionRowCountArray.count - 1, @"【HZYFormView Warning】: section index should not greater than section count");
     return self.sectionRowCountArray[section].integerValue;
 }
 
@@ -159,22 +159,4 @@
     }
     return _subDetailTextColor;
 }
-
-#pragma mark - private
-
-- (void)enumateAllCellUsingSingleSectionBlock:(void(^)(NSInteger i))sblock multiSectionBlock:(void(^)(NSInteger i))mblock multiRowBlock:(void(^)(NSInteger i, NSInteger j))rblock{
-    if (self.sectionRowCountArray.count == 1) {
-        for (NSInteger i=0; i<self.sectionRowCountArray[0].integerValue; i++) {
-            if (sblock) sblock(i);
-        }
-    }else{
-        for (NSInteger i=0; i<_sectionRowCountArray.count; i++) {
-            if (mblock) mblock(i);
-            for (NSInteger j=0; j<_sectionRowCountArray[i].integerValue; j++) {
-                if (rblock) rblock(i, j);
-            }
-        }
-    }
-}
-
 @end

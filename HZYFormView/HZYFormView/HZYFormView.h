@@ -62,6 +62,7 @@
 /// 为cell中指定的控件赋值
 - (void)setContentValue:(id)value forCellOptions:(HZYFormViewCellOption)options atIndexPath:(NSIndexPath *)indexPath;
 - (id)getValueFromCellOptions:(HZYFormViewCellOption)options atIndex:(NSIndexPath *)indexPath;
+- (void)setPlaceholder:(id)value forCellOptions:(HZYFormViewCellOption)options atIndexPath:(NSIndexPath *)indexPath;
 
 #pragma mark - cell's subviews
 - (void)setInputEnable:(BOOL)enable atIndexPath:(NSIndexPath *)indexPath;

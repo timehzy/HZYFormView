@@ -17,6 +17,7 @@
 - (UIView<HZYFormCellSubViewProtocol> *)subViewForType:(HZYFormViewCellOption)type;
 
 - (void)setContentValue:(id)value forOptions:(HZYFormViewCellOption)option;
+- (void)setPlaceholder:(id)value forOptions:(HZYFormViewCellOption)options;
 - (id)getContentValueForOptions:(HZYFormViewCellOption)options;
 
 @property (nonatomic, copy) void(^tapHandler)();

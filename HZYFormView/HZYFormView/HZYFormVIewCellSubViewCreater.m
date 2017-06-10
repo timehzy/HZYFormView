@@ -118,7 +118,7 @@
         if (self.dataModel.placeholders.count > i && [self.dataModel.placeholders[i] count] > j) {
             placeholder = self.dataModel.placeholders[i][j];
         }else{
-            placeholder = [NSString stringWithFormat:@"请输入%@", self.dataModel.titles[i][j]];
+            placeholder = [NSString stringWithFormat:@"%@", self.dataModel.titles[i][j]];
         }
         HZYFormInputField *inputField = [self createInputField:placeholder text:inputText];
         [cell addSubview:inputField];
@@ -131,7 +131,7 @@
         if (self.dataModel.placeholders.count > i && [self.dataModel.placeholders[i] count] > j) {
             inputView.placeholder = self.dataModel.placeholders[i][j];
         }else{
-            inputView.placeholder = [NSString stringWithFormat:@"请输入%@", self.dataModel.titles[i][j]];
+            inputView.placeholder = [NSString stringWithFormat:@"%@", self.dataModel.titles[i][j]];
         }
         if (self.dataModel.inputTexts.count > 0) {
             inputView.text = self.dataModel.inputTexts[i][j];

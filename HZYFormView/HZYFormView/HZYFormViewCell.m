@@ -33,6 +33,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         _subViewTypeDict = [NSMutableDictionary dictionary];
         _subViewStringTagDict = [NSMutableDictionary dictionary];
         _tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction)];
+        _options = HZYFormViewCellOptions;
         [self addGestureRecognizer:_tapGesture];
     }
     return self;
@@ -133,7 +134,6 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
             NSAssert(0, @"not support for set value in such view");
             break;
     }
-
 }
 
 - (id)getContentValueForOptions:(HZYFormViewCellOption)options {
@@ -169,6 +169,48 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         case HZYFormViewCellContentCitySelector:
             NSAssert(0, @"not support for get value in such view");
             return nil;
+    }
+}
+
+- (void)setPlaceholder:(id)value forOptions:(HZYFormViewCellOption)options {
+    UIView *subView = [self subViewForType:options];
+    NSAssert(subView, @"no such view in cell");
+    switch (options) {
+        case HZYFormViewCellContentDatePickerAtoB:
+            self.startDate = value[HZYFormViewCellValueBeginDateKey];
+            self.endDate = value[HZYFormViewCellValueEndDateKey];
+            break;
+        case HZYFormViewCellContentDatePickerDefault:
+            self.startDate = value;
+            break;
+        case HZYFormViewCellContentSingleSelector:
+        case HZYFormViewCellContentMultiSelector:
+            self.selectList = value;
+            break;
+        case HZYFormViewCellContentSinglePhotoPicker:
+            ((HZYFormImageView *)subView).placeholder = value;
+            break;
+        case HZYFormViewCellContentInputView:
+            NSAssert([value isKindOfClass:[NSString class]], @"value must be a NSString object");
+            ((HZYFormInputView*)subView).placeholder = value;
+            break;
+        case HZYFormViewCellContentInputField:
+            NSAssert([value isKindOfClass:[NSString class]], @"value must be a NSString object");
+            ((HZYFormInputField*)subView).placeholder = value;
+            break;
+        case HZYFormViewCellContentMultiPhotoPicker:
+            ((HZYPicturePickerView *)subView).pictures = value;
+            break;
+        case HZYFormViewCellTitleText:
+        case HZYFormViewCellContentDetail:
+        case HZYFormViewCellContentSubDetail:
+        case HZYFormViewCellContentActionButton:
+        case HZYFormViewCellContentCitySelector:
+        case HZYFormViewCellTitleIcon:
+        case HZYFormViewCellContentIndicator:
+        case HZYFormViewCellContentCheckMark:
+            NSAssert(0, @"not support for set value in such view");
+            break;
     }
 }
 

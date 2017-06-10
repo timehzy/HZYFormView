@@ -45,6 +45,8 @@ typedef NS_OPTIONS(NSUInteger, HZYFormViewCellOption) {
 @end
 
 #define HZYFormCellHeight 46
+#define HZYFormViewSectionHeaderHeight 20
+#define HZYFormViewCellOptions HZYFormViewCellTitleText | HZYFormViewCellContentInputField
 #define HZYFormViewCellBackgroundColor [UIColor whiteColor]
 #define HZYFormViewCellSeperatorColor [UIColor lightGrayColor]
 #define HZYFormViewCellSeperatorInsets UIEdgeInsetsMake(0, 16, 0, 0)
