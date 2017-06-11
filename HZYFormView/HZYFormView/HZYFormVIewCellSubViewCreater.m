@@ -57,8 +57,8 @@
         options & HZYFormViewCellContentDatePickerDefault ||
         options & HZYFormViewCellContentDatePickerAtoB ||
         options & HZYFormViewCellContentCitySelector) {
-        HZYFormImageView *indicator = [[HZYFormImageView alloc]initWithImage:[UIImage imageNamed:@"mm_bottom_indicator"]];
-        indicator.highlightedImage = [UIImage imageNamed:@"mm_top_indicator"];
+        HZYFormImageView *indicator = [[HZYFormImageView alloc]initWithImage:[UIImage imageNamed:@"down_indicator"]];
+        indicator.highlightedImage = [UIImage imageNamed:@"up_indicator"];
         indicator.contentMode = UIViewContentModeCenter;
         if (options & HZYFormViewCellContentSingleSelector) {
             indicator.type = HZYFormViewCellContentSingleSelector;
@@ -76,7 +76,6 @@
     if (options & HZYFormViewCellContentMultiPhotoPicker) {
         HZYPicturePickerView *picPicker = [HZYPicturePickerView new];
         picPicker.pickerDelegate = cell;
-        picPicker.type = HZYFormViewCellContentMultiPhotoPicker;
         if (self.dataModel.pictures.count > i && [self.dataModel.pictures[i] count] > j) {
             if ([[self.dataModel.pictures[i][j] firstObject] isKindOfClass:[UIImage class]]) {
                 picPicker.pictures = self.dataModel.pictures[i][j];

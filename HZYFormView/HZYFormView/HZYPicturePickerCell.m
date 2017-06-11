@@ -21,7 +21,7 @@
 - (void)setImage:(UIImage *)image {
     _image = image;
     
-    self.imageView.image = (image == nil) ? [UIImage imageNamed:@"add_pic"] : image;
+    self.imageView.image = (image == nil) ? [UIImage imageNamed:@"add"] : image;
     
     if (self.editable) {
         self.deleteButton.hidden = (image == nil);

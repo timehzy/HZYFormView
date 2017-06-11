@@ -200,14 +200,14 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 
 #pragma mark - action
 - (void)tapAction{
-//    [self cancleAlertStyle];
+    [self cancleAlertStyle];
     [self photoPickerAction];
-//    [self selectorAction];
-//    [self citySelectorAction];
-//    [self datePickerDefalutAction];
-//    [self datePickerAtoBAction];
+    [self selectorAction];
+    [self citySelectorAction];
+    [self datePickerDefalutAction];
+    [self datePickerAtoBAction];
     if (self.tapHandler) {
-//        self.tapHandler();
+        self.tapHandler();
     }
 }
 
@@ -256,12 +256,16 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 
 #pragma mark - layout
 - (void)layoutSingleSubView {
-    [self.subviews.firstObject mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).offset(6);
-        make.leading.equalTo(self).offset([self.subviews.firstObject isKindOfClass:[HZYFormInputView class]] ? 10 : 16);
-        make.bottom.equalTo(self).offset(-6);
-        make.trailing.equalTo(self).offset(-16);
-    }];
+    if (self.options & HZYFormViewCellContentMultiPhotoPicker) {
+        [self layoutMultiPhotoPicker:self.subviews.firstObject];
+    }else{
+        [self.subviews.firstObject mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self).offset(6);
+            make.leading.equalTo(self).offset([self.subviews.firstObject isKindOfClass:[HZYFormInputView class]] ? 10 : 16);
+            make.bottom.equalTo(self).offset(-6);
+            make.trailing.equalTo(self).offset(-16);
+        }];
+    }
 }
 
 - (void)layoutMultiSubViews {
@@ -293,7 +297,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 }
 
 - (void)layoutTitleText:(UIView *)view {
-    if ([self subViewForType:HZYFormViewCellContentSinglePhotoPicker]) {
+    if (self.options & HZYFormViewCellContentSinglePhotoPicker) {
         [view mas_makeConstraints:^(MASConstraintMaker *make) {
             make.leading.equalTo(self).offset(16);
             make.top.equalTo(self).offset(12);
@@ -327,7 +331,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         if (self.subviews.count > 1) {
             make.top.equalTo(self.subviews.firstObject.mas_bottom).offset(4);
         }else{
-            make.top.equalTo(self).offset(6);
+            make.top.equalTo(self).offset(12);
         }
         make.leading.equalTo(self).offset(16);
         make.trailing.equalTo(self);

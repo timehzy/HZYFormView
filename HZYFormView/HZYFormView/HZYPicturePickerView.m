@@ -55,11 +55,9 @@
 
 #pragma mark - 构造函数
 - (instancetype)init {
-    _type = HZYFormViewCellContentMultiPhotoPicker;
-    HZYPicturePickerLayout *layout = [[HZYPicturePickerLayout alloc] init];
-    
-    self = [super initWithFrame:CGRectZero collectionViewLayout:layout];
-    if (self) {
+    HZYPicturePickerLayout *layout = [[HZYPicturePickerLayout alloc] init];    
+    if (self = [super initWithFrame:CGRectZero collectionViewLayout:layout]) {
+        _type = HZYFormViewCellContentMultiPhotoPicker;
         _pictures = [NSMutableArray array];
         _urls = [NSMutableArray array];
         _maxPicCount = 5;
