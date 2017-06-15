@@ -7,7 +7,7 @@
 //
 
 #import "HZYFormViewCellSubViews.h"
-#import "UIImageView+AFNetworking.h"
+#import "UIImageView+WebCache.h"
 
 
 @implementation HZYFormLabel
@@ -99,7 +99,7 @@
         return;
     }
     _url = url;
-    [self setImageWithURL:[NSURL URLWithString:url]];
+    [self sd_setImageWithURL:[NSURL URLWithString:url]];
 }
 
 - (id)value {

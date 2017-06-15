@@ -6,6 +6,7 @@
 
 #import "HZYPicturePickerView.h"
 #import "HZYPicturePickerCell.h"
+#import "HZYImageScanView.h"
 
 #pragma mark - 自定义照片选择视图布局
 @interface HZYPicturePickerLayout : UICollectionViewFlowLayout
@@ -16,10 +17,8 @@
 @implementation HZYPicturePickerLayout
 - (void)prepareLayout {
     [super prepareLayout];
-    
     CGFloat margin = 8;
-    CGFloat w = 75;
-    
+    CGFloat w = ([UIScreen mainScreen].bounds.size.width - 16*2 -3*8) / 4;    
     self.itemSize = CGSizeMake(w, w);
     self.minimumInteritemSpacing = margin;
     self.minimumLineSpacing = margin;
@@ -27,7 +26,7 @@
 @end
 
 #pragma mark - 照片选择视图
-@interface HZYPicturePickerView() <UICollectionViewDataSource, UICollectionViewDelegate, HZYPicturePickerCellDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface HZYPicturePickerView() <UICollectionViewDataSource, UICollectionViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, HZYImageScanViewDelegate>
 @property (nonatomic, strong) NSMutableArray *realValues;
 
 @end
@@ -40,26 +39,18 @@
         return;
     }
 
-    [self.pictures addObject:image];
     [self.realValues addObject:image];
     [self reloadData];
 }
 
-- (void)addUrl:(NSString *)url{
-    if (url == nil) {
-        return;
-    }
-    [self.urls addObject:url];
-    [self reloadData];
-}
 
 #pragma mark - 构造函数
 - (instancetype)init {
-    HZYPicturePickerLayout *layout = [[HZYPicturePickerLayout alloc] init];    
-    if (self = [super initWithFrame:CGRectZero collectionViewLayout:layout]) {
-        _type = HZYFormViewCellContentMultiPhotoPicker;
-        _pictures = [NSMutableArray array];
-        _urls = [NSMutableArray array];
+    _type = HZYFormViewCellContentMultiPhotoPicker;
+    HZYPicturePickerLayout *layout = [[HZYPicturePickerLayout alloc] init];
+    
+    self = [super initWithFrame:CGRectZero collectionViewLayout:layout];
+    if (self) {
         _maxPicCount = 5;
         _editable = YES;
         self.backgroundColor = [UIColor clearColor];
@@ -70,18 +61,14 @@
     return self;
 }
 
-#pragma mark - PicturePickerCellDelegate
-- (void)deleteButtonTouchInPicturePickerCell:(HZYPicturePickerCell *)cell {
-    NSIndexPath *indexPath = [self indexPathForCell:cell];
-    [self.pictures removeObjectAtIndex:indexPath.item];
-    if (self.urls && self.urls.count > indexPath.item) {
-        [self.urls removeObjectAtIndex:indexPath.item];
+#pragma mark - UIImagePickerControllerDelegate
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
+    UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
+    [self addImage:image];
+    if (self.pickerDelegate && [self.pickerDelegate respondsToSelector:@selector(picturePicker:imageAdded:atIndex:)]) {
+        [self.pickerDelegate picturePicker:self imageAdded:image atIndex:self.realValues.count - 1];
     }
-    [self reloadData];
-    if (self.pickerDelegate && [self.pickerDelegate respondsToSelector:@selector(picturePicker:imageDeletedAtIndex:)]) {
-        [self.pickerDelegate picturePicker:self imageDeletedAtIndex:indexPath.item];
-    }
-    [self.realValues removeObjectAtIndex:indexPath.item];
+    [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -102,75 +89,67 @@
             cell.image = self.realValues[indexPath.item];
         }
     }else{
-        cell.image = nil;
         cell.url = nil;
+        cell.image = nil;
     }
-    cell.editable = self.editable;
-    cell.delegate = self;
     return cell;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.item != self.realValues.count && self.pickerDelegate && [self.pickerDelegate respondsToSelector:@selector(picturePicker:imageDidSelected:)]) {
-        [self.pickerDelegate picturePicker:self imageDidSelected:self.pictures[indexPath.item]];
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"删除照片" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-        UIAlertAction *delete = [UIAlertAction actionWithTitle:@"删除" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-            [self.pictures removeObjectAtIndex:indexPath.item];
-            if (self.urls && self.urls.count > indexPath.item) {
-                [self.urls removeObjectAtIndex:indexPath.item];
-            }
-            [self reloadData];
-            if (self.pickerDelegate && [self.pickerDelegate respondsToSelector:@selector(picturePicker:imageDeletedAtIndex:)]) {
-                [self.pickerDelegate picturePicker:self imageDeletedAtIndex:indexPath.item];
-            }
-            [self.realValues removeObjectAtIndex:indexPath.item];
-        }];
-        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
-        [alert addAction:delete];
-        [alert addAction:cancel];
-        [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
+        HZYPicturePickerCell *cell = (HZYPicturePickerCell *)[collectionView cellForItemAtIndexPath:indexPath];
+        [self.pickerDelegate picturePicker:self imageDidSelected:cell.image];
+        CGRect rect = [self convertRect:cell.frame toView:[UIApplication sharedApplication].keyWindow];
+        [self scanImage:rect beginIndex:indexPath.item];
     }else{
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"请选择" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-        UIAlertAction *camera = [UIAlertAction actionWithTitle:@"相机" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            UIImagePickerController *vc = [[UIImagePickerController alloc]init];
-            vc.delegate = self;
-            vc.sourceType = UIImagePickerControllerSourceTypeCamera;
-            [[self viewController] presentViewController:vc animated:YES completion:nil];
-        }];
-        UIAlertAction *photo = [UIAlertAction actionWithTitle:@"图库" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            UIImagePickerController *vc = [[UIImagePickerController alloc]init];
-            vc.delegate = self;
-            vc.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-            [[self viewController] presentViewController:vc animated:YES completion:nil];
-        }];
-        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
-        [alert addAction:camera];
-        [alert addAction:photo];
-        [alert addAction:cancel];
-        [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
+        [self showActionSheetForAndNewImage];
     }
 }
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
-    UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
-    [self addImage:image];
-    if (self.pickerDelegate && [self.pickerDelegate respondsToSelector:@selector(picturePicker:imageAdded:atIndex:)]) {
-        [self.pickerDelegate picturePicker:self imageAdded:image atIndex:self.pictures.count - 1];
+#pragma mark - HZYImageScanViewDelegate
+- (void)scanView:(HZYImageScanView *)scanView imageDidDelete:(NSInteger)index {
+    [self.realValues removeObjectAtIndex:index];
+    if (self.pickerDelegate && [self.pickerDelegate respondsToSelector:@selector(picturePicker:imageDeletedAtIndex:)]) {
+        [self.pickerDelegate picturePicker:self imageDeletedAtIndex:index];
     }
-    [picker dismissViewControllerAnimated:YES completion:nil];
+    [self reloadData];
+}
+
+- (CGRect)imageViewFrameAtIndex:(NSUInteger)index forScanView:(HZYImageScanView *)scanView {
+    HZYPicturePickerCell *cell = (HZYPicturePickerCell *)[self cellForItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
+    return [self convertRect:cell.frame toView:[UIApplication sharedApplication].keyWindow];
+}
+    
+- (void)scanView:(HZYImageScanView *)scanView willDismissAtIndex:(NSInteger)index {
+    HZYPicturePickerCell *cell = (HZYPicturePickerCell *)[self cellForItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
+    cell.imageView.hidden = YES;
+}
+
+- (void)scanView:(HZYImageScanView *)scanView didEndDismiss:(BOOL)dismissed atIndex:(NSUInteger)index {
+    HZYPicturePickerCell *cell = (HZYPicturePickerCell *)[self cellForItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
+    cell.imageView.hidden = NO;
+}
+
+- (void)scanImage:(CGRect)rect beginIndex:(NSUInteger)index {
+    HZYPicturePickerCell *cell = (HZYPicturePickerCell *)[self cellForItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
+    cell.imageView.hidden = YES;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        cell.imageView.hidden = NO;
+    });
+    [HZYImageScanView showWithImages:self.realValues beginIndex:index fromRect:rect deletable:YES delegate:self];
 }
 
 #pragma mark - getter & setter
 - (void)setUrls:(NSMutableArray *)urls{
     _urls = [urls mutableCopy];
-    [self reloadData];
     [self.realValues addObjectsFromArray:urls];
+    [self reloadData];
 }
 
 - (void)setPictures:(NSMutableArray *)pictures {
     _pictures = pictures;
-    [self reloadData];
     [self.realValues addObjectsFromArray:pictures];
+    [self reloadData];
 }
 
 - (NSMutableArray *)pictures{
@@ -192,6 +171,27 @@
 }
 
 #pragma mark - private
+- (void)showActionSheetForAndNewImage {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"请选择" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertAction *camera = [UIAlertAction actionWithTitle:@"相机" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UIImagePickerController *vc = [[UIImagePickerController alloc]init];
+        vc.delegate = self;
+        vc.sourceType = UIImagePickerControllerSourceTypeCamera;
+        [[self viewController] presentViewController:vc animated:YES completion:nil];
+    }];
+    UIAlertAction *photo = [UIAlertAction actionWithTitle:@"图库" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UIImagePickerController *vc = [[UIImagePickerController alloc]init];
+        vc.delegate = self;
+        vc.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        [[self viewController] presentViewController:vc animated:YES completion:nil];
+    }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+    [alert addAction:camera];
+    [alert addAction:photo];
+    [alert addAction:cancel];
+    [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
+}
+
 - (UIViewController *)viewController {
     for (UIView* next = [self superview]; next; next = next.superview) {
         UIResponder *nextResponder = [next nextResponder];

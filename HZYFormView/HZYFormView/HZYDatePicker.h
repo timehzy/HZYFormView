@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface HZYDatePicker : UIView
-+ (void)datePicker:(UIDatePickerMode)mode selectedHandler:(void(^)(NSDate *date))handler;
++ (void)datePicker:(UIDatePickerMode)mode selectedHandler:(void(^)(NSDate *date, BOOL isCanceled))handler;
 @end

@@ -10,7 +10,7 @@
 
 static NSInteger kHeight = 200;
 @interface HZYDatePicker ()
-@property (nonatomic, copy) void(^selectedHandler)(NSDate *date);
+@property (nonatomic, copy) void(^selectedHandler)(NSDate *date, BOOL isCanceled);
 @property (nonatomic, strong) UIDatePicker *datePicker;
 @property (nonatomic, strong) UIButton *confirmBtn;
 @property (nonatomic, strong) UIButton *cancelBtn;
@@ -20,7 +20,7 @@ static NSInteger kHeight = 200;
 @end
 @implementation HZYDatePicker
 
-+ (void)datePicker:(UIDatePickerMode)mode selectedHandler:(void(^)(NSDate *date))handler {
++ (void)datePicker:(UIDatePickerMode)mode selectedHandler:(void(^)(NSDate *date, BOOL isCanceled))handler {
     HZYDatePicker *picker = [[self alloc]initWithFrame:[UIScreen mainScreen].bounds mode:mode];
     picker.selectedHandler = handler;
 }
@@ -79,7 +79,7 @@ static NSInteger kHeight = 200;
 
 - (void)confirmBtnTouched{
     if (self.selectedHandler) {
-        self.selectedHandler(self.datePicker.date);
+        self.selectedHandler(self.datePicker.date, NO);
     }
     [UIView animateWithDuration:.25 animations:^{
         self.backgroundColor = [self.backgroundColor colorWithAlphaComponent:0];
@@ -91,6 +91,9 @@ static NSInteger kHeight = 200;
 }
 
 - (void)cancelBtnTouched{
+    if (self.selectedHandler) {
+        self.selectedHandler(self.datePicker.date, YES);
+    }
     [UIView animateWithDuration:.25 animations:^{
         self.backgroundColor = [self.backgroundColor colorWithAlphaComponent:0];
         _datePicker.transform = CGAffineTransformIdentity;

@@ -27,7 +27,4 @@
 
 @property (nonatomic, copy) NSString *stringTag;
 @property (nonatomic, assign) HZYFormViewCellOption type;
-/// 添加一张照片
-- (void)addImage:(UIImage *)image;
-- (void)addUrl:(NSString *)url;
 @end

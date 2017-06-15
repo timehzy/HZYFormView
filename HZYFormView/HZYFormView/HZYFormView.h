@@ -40,7 +40,7 @@
 /// 设置view的附件属性
 - (void)setCellAccessory:(NSDictionary *)dict atIndexPath:(NSIndexPath *)indexPath;
 /// 设置自定义的view作为一个cell
-- (void)setCustomViewAsCell:(HZYFormViewCell *)view atIndexPath:(NSIndexPath *)indexPath;
+- (void)setCustomViewAsCell:(UIView *)view atIndexPath:(NSIndexPath *)indexPath;
 
 - (NSUInteger)numberOfRowsInSection:(NSUInteger)section;
 - (HZYFormViewCell *)cellAtIndexPath:(NSIndexPath *)indexPath;

@@ -130,7 +130,7 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     }
 }
 
-- (void)setCustomViewAsCell:(HZYFormViewCell *)view atIndexPath:(NSIndexPath *)indexPath {
+- (void)setCustomViewAsCell:(UIView *)view atIndexPath:(NSIndexPath *)indexPath {
     NSAssert(view, @"【HZYFormView Warning】: can't set nil for custom view");
     HZYFormViewCell *cell = [self.dataModel getCellForRow:indexPath.row inSection:indexPath.section];
     view.frame = cell.frame;
@@ -320,12 +320,26 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     }else if (option & HZYFormViewCellContentInputView) {
         frame.size.height = 120;
     }else if (option & HZYFormViewCellContentMultiPhotoPicker) {
-        frame.size.height = 100;
+        if (self.dataModel.pictures &&
+            self.dataModel.pictures.count > section &&
+            [self.dataModel.pictures[section] count] > row &&
+            [self.dataModel.pictures[section][row] isKindOfClass:[NSArray class]] &&
+            [self.dataModel.pictures[section][row] count] > 3) {
+            frame.size.height = [self multiPhotoPickerHeightForNumberOfLine:2];
+        }else{
+            frame.size.height = [self multiPhotoPickerHeightForNumberOfLine:1];
+        }
     }
     cell.frame = frame;
     [self reCreateCellAtIndexPath:[NSIndexPath indexPathForRow:row inSection:section] options:option];
     [self reLayout:YES];
 }
+
+- (CGFloat)multiPhotoPickerHeightForNumberOfLine:(NSUInteger)lineNum {
+    CGFloat itemWH = ([UIScreen mainScreen].bounds.size.width - 16*2 -3*8) / 4;
+    return itemWH*lineNum + 12 + lineNum * 8 + 4;
+}
+
 
 - (HZYFormViewCell *)createCell:(CGFloat)cellY cellHeight:(CGFloat)cellHeight forRow:(NSUInteger)row inSection:(NSUInteger)section{
     HZYFormViewCell *view = [[HZYFormViewCell alloc]initWithFrame:CGRectMake(0, cellY, self.bounds.size.width, cellHeight)];
@@ -429,7 +443,7 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
         [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
             if ([cell isEqual:note.object]) {
                 CGRect frame = cell.frame;
-                frame.size.height = 185;
+                frame.size.height = [self multiPhotoPickerHeightForNumberOfLine:2];
                 cell.frame = frame;
                 [self reLayout:YES];
                 return;
@@ -444,7 +458,7 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
         [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
             if ([cell isEqual:note.object]) {
                 CGRect frame = cell.frame;
-                frame.size.height = 100;
+                frame.size.height = [self multiPhotoPickerHeightForNumberOfLine:1];
                 cell.frame = frame;
                 [self reLayout:YES];
                 return;

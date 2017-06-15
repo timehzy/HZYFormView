@@ -200,6 +200,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 
 #pragma mark - action
 - (void)tapAction{
+    [[UIApplication sharedApplication].keyWindow endEditing:YES];
     [self cancleAlertStyle];
     [self photoPickerAction];
     [self selectorAction];
@@ -334,7 +335,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
             make.top.equalTo(self).offset(12);
         }
         make.leading.equalTo(self).offset(16);
-        make.trailing.equalTo(self);
+        make.trailing.equalTo(self).offset(-16);
         make.bottom.equalTo(self);
     }];
 }
@@ -355,7 +356,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
             view.type & HZYFormViewCellContentCitySelector ||
             view.type & HZYFormViewCellContentDatePickerAtoB ||
             view.type & HZYFormViewCellContentDatePickerDefault) {
-            make.width.equalTo(@20);
+            make.width.equalTo(@12);
         }else if (view.type & HZYFormViewCellContentIndicator) {
             make.width.equalTo(@12);
         }else if (view == self.subviews[self.subviews.count - 1]) {
@@ -467,7 +468,6 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         return;
     }
     ((HZYFormImageView *)[self subViewForType:HZYFormViewCellContentCitySelector]).highlighted = !((HZYFormImageView *)[self subViewForType:HZYFormViewCellContentCitySelector]).highlighted;
-    
 }
 
 - (void)datePickerDefalutAction {
@@ -475,11 +475,13 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         return;
     }
     ((HZYFormImageView *)[self subViewForType:HZYFormViewCellContentDatePickerDefault]).highlighted = !((HZYFormImageView *)[self subViewForType:HZYFormViewCellContentDatePickerDefault]).isHighlighted;
-    [HZYDatePicker datePicker:UIDatePickerModeDate selectedHandler:^(NSDate *date) {
-        self.startDate = date;
-        NSDateFormatter *f = [NSDateFormatter new];
-        f.dateFormat = @"yyyy年MM月dd日";
-        [self setTextForLabelOrInputView:[f stringFromDate:date]];
+    [HZYDatePicker datePicker:UIDatePickerModeDate selectedHandler:^(NSDate *date, BOOL isCanceled) {
+        if (!isCanceled) {
+            self.startDate = date;
+            NSDateFormatter *f = [NSDateFormatter new];
+            f.dateFormat = @"yyyy-MM-dd";
+            [self setTextForLabelOrInputView:[f stringFromDate:date]];
+        }
         ((HZYFormImageView *)[self subViewForType:HZYFormViewCellContentDatePickerDefault]).highlighted = !((HZYFormImageView *)[self subViewForType:HZYFormViewCellContentDatePickerDefault]).isHighlighted;
     }];
 }
