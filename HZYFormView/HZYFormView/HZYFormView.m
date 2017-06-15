@@ -38,7 +38,7 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
 
 - (NSArray<HZYFormViewCell *> *)visibleCells {
     NSMutableArray *temp = [NSMutableArray array];
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         [temp addObject:cell];
     }];
     return temp.copy;
@@ -74,11 +74,11 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
 
 - (void)setCellHeight:(CGFloat)height atIndexPath:(NSIndexPath *)indexPath animate:(BOOL)animate {
     if (!indexPath || indexPath.row == -1) {
-        [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row) {
+        [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
             if (!indexPath || section == indexPath.section) {
                 [self changeCellHeigthAtRow:row inSection:section newHeight:height];
             }
-        } cellBlock:nil];
+        }];
     } else {
         [self changeCellHeigthAtRow:indexPath.row inSection:indexPath.section newHeight:height];
     }
@@ -162,6 +162,26 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     return [cell getContentValueForOptions:options];
 }
 
+- (NSArray *)getAllValues {
+    NSMutableArray *tempArray = [NSMutableArray array];
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
+        if (row == 0) {
+            [tempArray addObject:[NSMutableArray array]];
+        }
+        [tempArray[section] addObject:[cell getContentValueForOptions:HZYFormViewCellContentInputField]];
+        if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentInputView];
+        }
+        if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentSinglePhotoPicker];
+        }
+        if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentMultiPhotoPicker];
+        }
+    }];
+    return tempArray.copy;
+}
+
 - (void)setInputEnable:(BOOL)enable atIndexPath:(NSIndexPath *)indexPath {
     [self isIndexPathOutofBounds:indexPath];
     [self getInputView:indexPath].userInteractionEnabled = enable;
@@ -175,14 +195,13 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
 - (NSArray<NSIndexPath *> *)checkIsEmpty:(NSArray<NSIndexPath *> *)indexPaths {
     NSMutableArray *tempArr = [NSMutableArray array];
     if (!indexPaths) {
-        [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row) {
-            HZYFormViewCell *cell = [self.dataModel getCellForRow:row inSection:section];
+        [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
             NSString *value = [self getValueFromCellOptions:HZYFormViewCellContentInputField | HZYFormViewCellContentInputView atIndex:[NSIndexPath indexPathForRow:row inSection:section]];
             if (([cell subViewForType:HZYFormViewCellContentInputField] || [cell subViewForType:HZYFormViewCellContentInputView]) &&
                 (!value || [value isEqualToString:@""])) {
                 [tempArr addObject:[NSIndexPath indexPathForRow:row inSection:section]];
             }
-        } cellBlock:nil];
+        }];
     }else{        
         for (NSIndexPath *path in indexPaths) {
             [self isIndexPathOutofBounds:path];
@@ -254,7 +273,7 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     [super setContentOffset:contentOffset];
     CGFloat up = contentOffset.y + 64;
     CGFloat down = up + self.bounds.size.height - 64;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         if ((cell.frame.origin.y > up && CGRectGetMaxY(cell.frame) < down) || (cell.frame.origin.y < up && CGRectGetMaxY(cell.frame) > up) || (CGRectGetMaxY(cell.frame) > down && cell.frame.origin.y < down)) {
             cell.visible = YES;
         }else{
@@ -337,7 +356,7 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
 
 - (CGFloat)multiPhotoPickerHeightForNumberOfLine:(NSUInteger)lineNum {
     CGFloat itemWH = ([UIScreen mainScreen].bounds.size.width - 16*2 -3*8) / 4;
-    return itemWH*lineNum + 12 + lineNum * 8 + 4;
+    return itemWH*lineNum + 12 + lineNum * 8 + 4 + 28;
 }
 
 
@@ -423,14 +442,11 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     return inputView;
 }
 
-- (void)enumateAllCellsUsingIndexBlock:(void(^)(NSInteger section, NSUInteger row))indexBlock cellBlock:(void(^)(HZYFormViewCell *cell))cellBlock{
+- (void)enumateAllCellsUsingIndexBlock:(void(^)(NSInteger section, NSUInteger row, HZYFormViewCell *cell))indexBlock{
     for (NSInteger i=0; i<[self.dataModel getSectionCount]; i++) {
         for (NSInteger j=0; j<[self.dataModel getRowCountInSection:i]; j++) {
             if (indexBlock) {
-                indexBlock(i, j);
-            }
-            if (cellBlock) {
-                cellBlock([self.dataModel getCellForRow:j inSection:i]);
+                indexBlock(i, j, [self.dataModel getCellForRow:j inSection:i]);
             }
         }
     }
@@ -440,7 +456,7 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
 - (void)multiPicPickerDidAddImage:(NSNotification *)note {
     NSInteger index = [note.userInfo[HZYFormCellNewAddedImageIndexKey] integerValue];
     if (index == 3) {
-        [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
             if ([cell isEqual:note.object]) {
                 CGRect frame = cell.frame;
                 frame.size.height = [self multiPhotoPickerHeightForNumberOfLine:2];
@@ -455,7 +471,7 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
 - (void)multiPicPickerDidDeletedImage:(NSNotification *)note {
     NSInteger count = [note.userInfo[HZYFormCellDeletedImageRemainCountKey] integerValue];
     if (count == 3) {
-        [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+        [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
             if ([cell isEqual:note.object]) {
                 CGRect frame = cell.frame;
                 frame.size.height = [self multiPhotoPickerHeightForNumberOfLine:1];
@@ -570,92 +586,91 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
 
 - (void)setCellBackgroundColor:(UIColor *)color {
     self.dataModel.cellBackgroundColor = color;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         cell.backgroundColor = color;
     }];
 }
 
 - (void)setCellSeperatorColor:(UIColor *)color {
     self.dataModel.cellSeperatorColor = color;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         cell.seperator.backgroundColor = color;
     }];
 }
 
 - (void)setCellSeperatorInsets:(UIEdgeInsets)insets {
     self.dataModel.cellSeperatorInsets = insets;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         cell.seperator.frame = CGRectMake(insets.left, cell.frame.size.height - 0.5, cell.frame.size.width - insets.left, 0.5);
     }];
 }
 
 - (void)setTitleFont:(UIFont *)titleFont {
     self.dataModel.titleFont = titleFont;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         ((HZYFormLabel *)[cell subViewForType:HZYFormViewCellTitleText]).font = titleFont;
     }];
 }
 
 - (void)setTitleColor:(UIColor *)titleColor {
     self.dataModel.titleColor = titleColor;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         ((HZYFormLabel *)[cell subViewForType:HZYFormViewCellTitleText]).textColor = titleColor;
     }];
 }
 
 - (void)setInputFieldFont:(UIFont *)inputFieldFont {
     self.dataModel.inputFieldFont = inputFieldFont;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         ((HZYFormInputField *)[cell subViewForType:HZYFormViewCellContentInputField]).font = inputFieldFont;
-
     }];
 }
 
 - (void)setInputFieldTextColor:(UIColor *)inputFieldTextColor {
     self.dataModel.inputFieldTextColor = inputFieldTextColor;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         ((HZYFormInputField *)[cell subViewForType:HZYFormViewCellContentInputField]).textColor = inputFieldTextColor;
     }];
 }
 
 - (void)setInputViewFont:(UIFont *)inputViewFont {
     self.dataModel.inputViewFont = inputViewFont;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         ((HZYFormInputView *)[cell subViewForType:HZYFormViewCellContentInputView]).font = inputViewFont;
     }];
 }
 
 - (void)setInputViewTextColor:(UIColor *)inputViewTextColor {
     self.dataModel.inputViewTextColor = inputViewTextColor;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         ((HZYFormInputView *)[cell subViewForType:HZYFormViewCellContentInputView]).textColor = inputViewTextColor;
     }];
 }
 
 - (void)setDetailFont:(UIFont *)detailFont {
     self.dataModel.detailFont = detailFont;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         ((HZYFormLabel *)[cell subViewForType:HZYFormViewCellContentDetail]).font = detailFont;
     }];
 }
 
 - (void)setDetailTextColor:(UIColor *)detailTextColor {
     self.dataModel.detailTextColor = detailTextColor;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         ((HZYFormLabel *)[cell subViewForType:HZYFormViewCellContentDetail]).textColor = detailTextColor;
     }];
 }
 
 - (void)setSubDetailFont:(UIFont *)subDetailFont {
     self.dataModel.subDetailFont = subDetailFont;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         ((HZYFormLabel *)[cell subViewForType:HZYFormViewCellContentSubDetail]).font = subDetailFont;
     }];
 }
 
 - (void)setSubDetailTextColor:(UIColor *)subDetailTextColor {
     self.dataModel.subDetailTextColor = subDetailTextColor;
-    [self enumateAllCellsUsingIndexBlock:nil cellBlock:^(HZYFormViewCell *cell) {
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         ((HZYFormLabel *)[cell subViewForType:HZYFormViewCellContentSubDetail]).textColor = subDetailTextColor;
     }];
 }

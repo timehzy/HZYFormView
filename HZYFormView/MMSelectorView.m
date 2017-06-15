@@ -3,11 +3,14 @@
 //  CMM
 //
 //  Created by Melody_Zhy on 2016/12/19.
-//  Copyright © 2016年 zhy. All rights reserved.
+//  Copyright © 2016年 zuozheng. All rights reserved.
 //
 
 #import "MMSelectorView.h"
 #import "Masonry.h"
+
+#define kScreenHeight [UIScreen mainScreen].bounds.size.height
+#define kScreenWidth [UIScreen mainScreen].bounds.size.width
 
 @interface MMSelectorMultipledCell : UITableViewCell
 @property (nonatomic, copy) NSString *titleText;
@@ -70,8 +73,6 @@
 @property (nonatomic, weak) UIView *selectorView;
 @property (nonatomic, assign) CGFloat height;
 @property (nonatomic, assign) BOOL animation;
-@property (nonatomic, weak) UITableViewCell *selectCell;
-@property (nonatomic, strong) NSIndexPath *selectIndexPath;
 @property (nonatomic, strong) NSMutableArray *selectsList;
 @end
 
@@ -81,7 +82,7 @@
     
     if (self = [super init]) {
         
-        self.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+        self.frame = CGRectMake(0, 0, kScreenWidth, kScreenHeight);
         self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.3];
         self.alpha = 0;
         
@@ -92,13 +93,11 @@
         self.list = list;
         self.multipled = multipled;
         
-        if (self.multipled) {
-            NSMutableArray *arrM = [NSMutableArray arrayWithCapacity:self.list.count];
-            for (NSInteger i = 0; i<self.list.count; i++) {
-                [arrM addObject:@0];
-            }
-            self.selectsList = arrM;
+        NSMutableArray *arrM = [NSMutableArray arrayWithCapacity:self.list.count];
+        for (NSInteger i = 0; i<self.list.count; i++) {
+            [arrM addObject:@0];
         }
+        self.selectsList = arrM;
         
         CGFloat height = 0;
         if (list.count >= 8) {
@@ -107,7 +106,7 @@
             height = 45 * (list.count + 1);
         }
         if (multipled && list.count <= 5) {
-            height = 270;
+            height = 225;
         }
         
         if (multipled == NO && list.count <= 5) {
@@ -116,13 +115,13 @@
         
         self.height = height;
         
-        UIView *selectorView = [[UIView alloc] initWithFrame:CGRectMake(0, [UIScreen mainScreen].bounds.size.height, [UIScreen mainScreen].bounds.size.width, height)];
+        UIView *selectorView = [[UIView alloc] initWithFrame:CGRectMake(0, kScreenHeight - height, kScreenWidth, height)];
         selectorView.backgroundColor = [UIColor whiteColor];
         [self addSubview:selectorView];
         self.selectorView = selectorView;
         
         if (multipled == NO && list.count <= 5) {
-            UITableView *sheetTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, height) style:UITableViewStyleGrouped];
+            UITableView *sheetTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, height) style:UITableViewStyleGrouped];
             sheetTableView.delegate = self;
             sheetTableView.dataSource = self;
             sheetTableView.rowHeight = 45;
@@ -134,10 +133,10 @@
             // 头部视图
             UIView *headerView = [[UIView alloc] init];
             headerView.backgroundColor = [UIColor whiteColor];
-            headerView.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 45);
+            headerView.frame = CGRectMake(0, 0, kScreenWidth, 45);
             [selectorView addSubview:headerView];
             
-            UIView *bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, 44.5, [UIScreen mainScreen].bounds.size.width, 0.5)];
+            UIView *bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, 44.5, kScreenWidth, 0.5)];
             bottomLine.backgroundColor = [UIColor lightGrayColor];
             [headerView addSubview:bottomLine];
             
@@ -147,7 +146,7 @@
             [headerView addSubview:closeBtn];
             [closeBtn addTarget:self action:@selector(cancleDismissSelector) forControlEvents:UIControlEventTouchUpInside];
             
-            UIButton *saveBtn = [[UIButton alloc] initWithFrame:CGRectMake([UIScreen mainScreen].bounds.size.width - 47, 14.5, 40, 16)];
+            UIButton *saveBtn = [[UIButton alloc] initWithFrame:CGRectMake(kScreenWidth - 47, 14.5, 40, 16)];
             [saveBtn setTitle:@"选择" forState:UIControlStateNormal];
             [saveBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
             saveBtn.titleLabel.font = [UIFont systemFontOfSize:16];
@@ -155,7 +154,7 @@
             [saveBtn addTarget:self action:@selector(saveBtnClick) forControlEvents:UIControlEventTouchUpInside];
             
             // tableView
-            UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 45,[UIScreen mainScreen].bounds.size.width, height - 45) style:UITableViewStylePlain];
+            UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 45, kScreenWidth, height - 45) style:UITableViewStylePlain];
             tableView.backgroundColor = [UIColor whiteColor];
             tableView.rowHeight = 45;
             tableView.tableFooterView = [[UIView alloc] init];
@@ -217,12 +216,12 @@
             make.center.equalTo(cell.contentView);
         }];
         
-        UIView *bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, 44.5, [UIScreen mainScreen].bounds.size.width, 0.5)];
+        UIView *bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, 44.5, kScreenWidth, 0.5)];
         bottomLine.backgroundColor = [UIColor lightGrayColor];
         [cell.contentView addSubview:bottomLine];
         
         if (indexPath.section == 1) {
-            UIView *bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 0.5)];
+            UIView *bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 0.5)];
             bottomLine.backgroundColor = [UIColor lightGrayColor];
             [cell.contentView addSubview:bottomLine];
         }
@@ -245,7 +244,7 @@
             cell.textLabel.font = [UIFont systemFontOfSize:16];
             cell.textLabel.text = [NSString stringWithFormat:@"%@", self.list[indexPath.row]];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            if ([self.selectedRow integerValue] == indexPath.row) {
+            if ([self.selectsList[indexPath.row] isEqualToNumber:@1]) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             } else {
                 cell.accessoryType = UITableViewCellAccessoryNone;
@@ -276,15 +275,14 @@
             }
             [tableView reloadData];
         } else {
-            if (self.selectedRow) {
-                UITableViewCell *defaultCell = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[self.selectedRow integerValue] inSection:0]];
-                defaultCell.accessoryType = UITableViewCellAccessoryNone;
+            for (NSInteger i = 0; i<self.selectsList.count; i++) {
+                if (i == indexPath.row) {
+                    [self.selectsList replaceObjectAtIndex:indexPath.row withObject:@1];
+                } else {
+                    [self.selectsList replaceObjectAtIndex:i withObject:@0];
+                }
             }
-            self.selectCell.accessoryType = UITableViewCellAccessoryNone;
-            UITableViewCell *selectCell = [tableView cellForRowAtIndexPath:indexPath];
-            selectCell.accessoryType = UITableViewCellAccessoryCheckmark;
-            self.selectCell = selectCell;
-            self.selectIndexPath = indexPath;
+            [tableView reloadData];
         }
     }
     
@@ -328,11 +326,13 @@
         }
     } else {
         if (self.selectorBlock) {
-            if (self.selectIndexPath) {
-                self.selectorBlock(@[@(self.selectIndexPath.row)]);
-            } else {
-                self.selectorBlock(@[@([self.selectedRow integerValue])]);
+            NSInteger selectRow = 0;
+            for (NSInteger i = 0; i<self.selectsList.count; i++) {
+                if ([self.selectsList[i] isEqualToNumber:@1]) {
+                    selectRow = i;
+                }
             }
+            self.selectorBlock(@[@(selectRow)]);
         }
     }
     [self dismissSelector];
@@ -368,6 +368,23 @@
         return YES;
     }
     return NO;
+}
+
+- (void)setSelectedRow:(NSString *)selectedRow {
+    _selectedRow = selectedRow;
+    // 默认选择第一个
+    if (selectedRow == nil) {
+        selectedRow = @"0";
+    }
+    NSMutableArray *arrM = [NSMutableArray arrayWithCapacity:self.list.count];
+    for (NSInteger i = 0; i<self.list.count; i++) {
+        if (i == [selectedRow integerValue]) {
+            [arrM addObject:@1];
+        } else {
+            [arrM addObject:@0];
+        }
+    }
+    self.selectsList = arrM;
 }
 
 - (NSMutableArray *)selectsList {

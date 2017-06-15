@@ -104,7 +104,7 @@
 
 - (id)value {
     if ([self.image isEqual:self.placeholder]) {
-        return nil;
+        return [NSNull null];
     }else if (_didSetImage) {
         return self.image;
     }else{

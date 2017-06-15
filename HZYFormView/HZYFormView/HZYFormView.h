@@ -65,8 +65,10 @@
 #pragma mark - cell's value
 /// 为cell中指定的控件赋值
 - (void)setContentValue:(id)value forCellOptions:(HZYFormViewCellOption)options atIndexPath:(NSIndexPath *)indexPath;
-- (id)getValueFromCellOptions:(HZYFormViewCellOption)options atIndex:(NSIndexPath *)indexPath;
 - (void)setPlaceholder:(id)value forCellOptions:(HZYFormViewCellOption)options atIndexPath:(NSIndexPath *)indexPath;
+
+- (id)getValueFromCellOptions:(HZYFormViewCellOption)options atIndex:(NSIndexPath *)indexPath;
+- (NSArray *)getAllValues;
 
 #pragma mark - cell's subviews
 - (void)setInputEnable:(BOOL)enable atIndexPath:(NSIndexPath *)indexPath;
@@ -93,7 +95,6 @@
 - (void)setDetailTextColor:(UIColor *)detailTextColor;
 - (void)setSubDetailFont:(UIFont *)subDetailFont;
 - (void)setSubDetailTextColor:(UIColor *)subDetailTextColor;
-
 #pragma mark - 试验性功能
 /// 一个cell出现的动画
 @property (nonatomic, assign) BOOL cellShowAnimation;

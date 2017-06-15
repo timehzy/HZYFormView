@@ -49,7 +49,7 @@
 		4C7CB1051EE815D300F9737B /* NSLayoutConstraint+MASDebugAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7CB0F71EE815D300F9737B /* NSLayoutConstraint+MASDebugAdditions.m */; };
 		4C7CB1061EE815D300F9737B /* View+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7CB0F91EE815D300F9737B /* View+MASAdditions.m */; };
 		4C7CB1071EE815D300F9737B /* ViewController+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7CB0FC1EE815D300F9737B /* ViewController+MASAdditions.m */; };
-		4C7CB10A1EE8162400F9737B /* MMSelectorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7CB1091EE8162300F9737B /* MMSelectorView.m */; };
+		4CA7F1BB1EF2A922009208B4 /* MMSelectorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CA7F1BA1EF2A922009208B4 /* MMSelectorView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -141,8 +141,8 @@
 		4C7CB0FA1EE815D300F9737B /* View+MASShorthandAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "View+MASShorthandAdditions.h"; sourceTree = "<group>"; };
 		4C7CB0FB1EE815D300F9737B /* ViewController+MASAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ViewController+MASAdditions.h"; sourceTree = "<group>"; };
 		4C7CB0FC1EE815D300F9737B /* ViewController+MASAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ViewController+MASAdditions.m"; sourceTree = "<group>"; };
-		4C7CB1081EE8162300F9737B /* MMSelectorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSelectorView.h; sourceTree = "<group>"; };
-		4C7CB1091EE8162300F9737B /* MMSelectorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSelectorView.m; sourceTree = "<group>"; };
+		4CA7F1B91EF2A922009208B4 /* MMSelectorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSelectorView.h; sourceTree = "<group>"; };
+		4CA7F1BA1EF2A922009208B4 /* MMSelectorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSelectorView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,8 +220,8 @@
 				4C7CB0BA1EE8153C00F9737B /* Assets.xcassets */,
 				4C7CB0BC1EE8153C00F9737B /* LaunchScreen.storyboard */,
 				4C7CB0BF1EE8153C00F9737B /* Info.plist */,
-				4C7CB1081EE8162300F9737B /* MMSelectorView.h */,
-				4C7CB1091EE8162300F9737B /* MMSelectorView.m */,
+				4CA7F1B91EF2A922009208B4 /* MMSelectorView.h */,
+				4CA7F1BA1EF2A922009208B4 /* MMSelectorView.m */,
 				4C3924701EF283F10028CE81 /* SDWebImage */,
 				4C7CB0E21EE815D300F9737B /* Masonry */,
 				4C7CB0AE1EE8153C00F9737B /* Supporting Files */,
@@ -397,10 +397,10 @@
 				4C7CB0DE1EE8154B00F9737B /* HZYFormViewCellSubViews.m in Sources */,
 				4C7CB1031EE815D300F9737B /* MASViewConstraint.m in Sources */,
 				4C39246E1EF283C90028CE81 /* HZYPicturePickerView.m in Sources */,
+				4CA7F1BB1EF2A922009208B4 /* MMSelectorView.m in Sources */,
 				4C7CB0B31EE8153C00F9737B /* AppDelegate.m in Sources */,
 				4C7CB0DB1EE8154B00F9737B /* HZYFormView.m in Sources */,
 				4C39248E1EF283F10028CE81 /* NSData+ImageContentType.m in Sources */,
-				4C7CB10A1EE8162400F9737B /* MMSelectorView.m in Sources */,
 				4C39246D1EF283C90028CE81 /* HZYPicturePickerCell.m in Sources */,
 				4C7CB1071EE815D300F9737B /* ViewController+MASAdditions.m in Sources */,
 				4C3924911EF283F10028CE81 /* SDWebImageDecoder.m in Sources */,

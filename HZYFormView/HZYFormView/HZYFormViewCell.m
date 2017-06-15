@@ -121,6 +121,9 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 
 - (id)getContentValueForOptions:(HZYFormViewCellOption)options {
     UIView *subView = [self subViewForType:options];
+    if (!subView) {
+        return [NSNull null];
+    }
     switch (options) {
         case HZYFormViewCellTitleIcon:
         case HZYFormViewCellContentIndicator:
@@ -298,7 +301,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 }
 
 - (void)layoutTitleText:(UIView *)view {
-    if (self.options & HZYFormViewCellContentSinglePhotoPicker) {
+    if (self.options & HZYFormViewCellContentSinglePhotoPicker || self.options & HZYFormViewCellContentMultiPhotoPicker) {
         [view mas_makeConstraints:^(MASConstraintMaker *make) {
             make.leading.equalTo(self).offset(16);
             make.top.equalTo(self).offset(12);
@@ -374,11 +377,16 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 - (void)layoutSeperator {
     UIView *sep = [UIView new];
     sep.tag = HZYFormCellSeperatorTag;
-    UIEdgeInsets insets = HZYFormViewCellSeperatorInsets;
-    sep.frame = CGRectMake(insets.left, self.frame.size.height - (insets.bottom + 0.5), self.bounds.size.width - insets.left - insets.right, 0.5);
     sep.backgroundColor = HZYFormViewCellSeperatorColor;
     [self addSubview:sep];
     self.seperator = sep;
+    UIEdgeInsets insets = HZYFormViewCellSeperatorInsets;
+    [sep mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.leading.equalTo(self).offset(insets.left);
+        make.trailing.equalTo(self).offset(insets.right);
+        make.bottom.equalTo(self);
+        make.height.equalTo(@.5);
+    }];
 }
 
 - (void)disableInputFieldInSelector {
@@ -452,6 +460,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
             [self setTextForLabelOrInputView:str];
         }else{
             NSMutableString *str = [NSMutableString string];
+//            select.selectedRow = 
             for (NSNumber *index in indexList) {
                 [str appendString:self.selectList[index.integerValue]];
                 [str appendString:@" "];
