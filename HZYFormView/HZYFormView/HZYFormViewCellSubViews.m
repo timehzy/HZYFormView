@@ -68,7 +68,7 @@
 
 - (void)setPlaceholder:(UIImage *)placeholder {
     _placeholder = placeholder;
-    if (!self.image) {
+    if (!self.image && [placeholder isKindOfClass:[UIImage class]]) {
         self.image = placeholder;
     }
 }
