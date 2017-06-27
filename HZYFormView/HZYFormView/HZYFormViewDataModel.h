@@ -15,6 +15,7 @@
 
 - (void)setCell:(HZYFormViewCell *)cell forRow:(NSUInteger)row inSection:(NSUInteger)section;
 - (HZYFormViewCell *)getCellForRow:(NSUInteger)row inSection:(NSUInteger)section;
+- (NSIndexPath *)indexPathOfCell:(HZYFormViewCell *)cell;
 
 - (void)setSectionRowCount:(NSArray *)array;
 - (NSUInteger)getRowCountInSection:(NSUInteger)section;
@@ -24,6 +25,7 @@
 - (HZYFormSectionHeaderView *)getSectionHeaderViewForSection:(NSUInteger)section;
 
 @property (nonatomic, copy) NSArray *titles;
+@property (nonatomic, copy) NSArray *icons;
 @property (nonatomic, copy) NSArray *placeholders;
 @property (nonatomic, copy) NSArray *inputTexts;
 @property (nonatomic, copy) NSArray *details;
@@ -45,4 +47,7 @@
 @property (nonatomic, strong) UIColor *cellBackgroundColor;
 @property (nonatomic, assign) UIEdgeInsets cellSeperatorInsets;
 @property (nonatomic, strong) UIColor *cellSeperatorColor;
+
+@property (nonatomic, assign) NSTextAlignment textAlignment;
+
 @end

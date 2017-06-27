@@ -192,6 +192,14 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     [self getInputView:indexPath].keyboardType = type;
 }
 
+- (void)setInputFieldAlignment:(NSTextAlignment)alignment {
+    self.dataModel.textAlignment = alignment;
+}
+
+- (void)setSelectorRelatedView:(HZYFormViewCellOption)viewOption forPath:(NSIndexPath *)indexPath {
+    [self cellAtIndexPath:indexPath].selectorRelatedView = viewOption;
+}
+
 - (NSArray<NSIndexPath *> *)checkIsEmpty:(NSArray<NSIndexPath *> *)indexPaths {
     NSMutableArray *tempArr = [NSMutableArray array];
     if (!indexPaths) {
@@ -220,9 +228,9 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     for (NSIndexPath *indexPath in rows) {
         HZYFormViewCell *cell = [self.dataModel getCellForRow:indexPath.row inSection:indexPath.section];
         if ([cell subViewForType:HZYFormViewCellContentInputField]) {
-            ((HZYFormInputField *)[cell subViewForType:HZYFormViewCellContentInputField]).layer.borderColor = [UIColor redColor].CGColor;
+            ((HZYFormInputField *)[cell subViewForType:HZYFormViewCellContentInputField]).layer.borderColor = HZYFormViewCellAlertBorderColor.CGColor;
         }else if ([cell subViewForType:HZYFormViewCellContentInputView]) {
-            ((HZYFormInputView *)[cell subViewForType:HZYFormViewCellContentInputView]).layer.borderColor = [UIColor redColor].CGColor;
+            ((HZYFormInputView *)[cell subViewForType:HZYFormViewCellContentInputView]).layer.borderColor = HZYFormViewCellAlertBorderColor.CGColor;
         }
     }
 }
@@ -268,6 +276,7 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
 //    NSLog(@"a");
 }
 
+#pragma mark - private
 // 动画用
 - (void)setContentOffset:(CGPoint)contentOffset {
     [super setContentOffset:contentOffset];
@@ -371,6 +380,9 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
             [weakSelf.delegate formView:weakSelf cellDidSelected:weakView indexPath:[NSIndexPath indexPathForRow:row inSection:section]];
         }
     };
+    if (self.autoNext) {
+        [self autoNextBecomeFirstResponder:view];
+    }
     [self addSubview:view];
     [self.dataModel setCell:view forRow:row inSection:section];
     return view;
@@ -452,6 +464,46 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     }
 }
 
+- (void)autoNextBecomeFirstResponder:(HZYFormViewCell *)view {
+    __weak typeof(self)weakSelf = self;
+    __weak typeof(view)weakView = view;
+    view.nextEditAction = ^{
+        if ([[weakSelf getNextCell:weakView] subViewForType:HZYFormViewCellContentInputField]) {
+            [[[weakSelf getNextCell:weakView] subViewForType:HZYFormViewCellContentInputField] becomeFirstResponder];
+        }else if ([[weakSelf getNextCell:weakView] subViewForType:HZYFormViewCellContentInputView]) {
+            [[[weakSelf getNextCell:weakView] subViewForType:HZYFormViewCellContentInputView] becomeFirstResponder];
+        }else{
+            HZYFormViewCell *cell = [weakSelf getNextCell:weakView];
+            while (![[weakSelf getNextCell:cell] subViewForType:HZYFormViewCellContentInputField] && ![[weakSelf getNextCell:cell] subViewForType:HZYFormViewCellContentInputView]) {
+                cell = [weakSelf getNextCell:weakView];
+            }
+            if ([cell subViewForType:HZYFormViewCellContentInputField]) {
+                [[cell subViewForType:HZYFormViewCellContentInputField] becomeFirstResponder];
+            }else if ([cell subViewForType:HZYFormViewCellContentInputView]) {
+                [[cell subViewForType:HZYFormViewCellContentInputView] becomeFirstResponder];
+            }
+        }
+    };
+}
+
+- (HZYFormViewCell *)getNextCell:(HZYFormViewCell *)cell {
+    NSIndexPath *indexPath = [self.dataModel indexPathOfCell:cell];
+    if (indexPath.section >= [self.dataModel getSectionCount]) {
+        return nil;
+    }
+   
+    if (indexPath.row >= [self.dataModel getRowCountInSection:indexPath.section] && indexPath.section == [self.dataModel getSectionCount] - 1) {
+        return nil;
+    }
+    if (indexPath.row == [self.dataModel getRowCountInSection:indexPath.section] - 1) {
+        return [self.dataModel getCellForRow:0 inSection:indexPath.section + 1];
+    }else{
+        return [self.dataModel getCellForRow:indexPath.row + 1 inSection:indexPath.section];
+    }
+    return nil;
+}
+
+
 #pragma mark - notification
 - (void)multiPicPickerDidAddImage:(NSNotification *)note {
     NSInteger index = [note.userInfo[HZYFormCellNewAddedImageIndexKey] integerValue];
@@ -521,6 +573,18 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     }
 }
 
+- (void)setIcons:(NSArray *)icons {
+    _icons = icons.copy;
+    self.dataModel.icons = icons;
+    for (NSInteger i=0; i<icons.count; i++) {
+        for (NSInteger j=0; j<[icons[i] count]; j++) {
+            [self setContentValue:icons[i][j] forCellOptions:HZYFormViewCellTitleIcon atIndexPath:[NSIndexPath indexPathForRow:j inSection:i]];
+            [[self.dataModel getCellForRow:j inSection:i] layoutIfNeeded];
+        }
+    }
+}
+
+
 - (void)setPlaceholders:(NSArray *)placeholders {
     _placeholders = placeholders.copy;
     self.dataModel.placeholders = placeholders;
@@ -584,6 +648,10 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     self.dataModel.checkmarks = checkmarks;
 }
 
+
+@end
+
+@implementation HZYFormView (HZYFormViewStyleSetting)
 - (void)setCellBackgroundColor:(UIColor *)color {
     self.dataModel.cellBackgroundColor = color;
     [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
@@ -675,4 +743,3 @@ NSString *const HZYFormCellAccessoryActionButton = @"HZYFormCellAccessoryActionB
     }];
 }
 @end
-

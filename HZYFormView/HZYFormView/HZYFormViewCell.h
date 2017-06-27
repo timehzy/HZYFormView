@@ -23,6 +23,7 @@ extern NSInteger const HZYFormCellSeperatorTag;
 - (id)getContentValueForOptions:(HZYFormViewCellOption)options;
 
 @property (nonatomic, copy) void(^tapHandler)();
+@property (nonatomic, copy) void(^nextEditAction)();
 @property (nonatomic, copy) NSString *stringTag;
 
 /// 当通过HZYFormView- (void)setContentValue: forCellAtIndexPath:方法设置selector类型的cell时，会为此属性赋值
@@ -34,11 +35,14 @@ extern NSInteger const HZYFormCellSeperatorTag;
 @property (nonatomic, strong) NSDate *startDate;
 @property (nonatomic, strong) NSDate *endDate;
 
+/// 返回选中的省市区字典
+@property (nonatomic, copy) NSDictionary *cityDict;
 
 @property (nonatomic, assign, getter=isVisible) BOOL visible;
 @property (nonatomic, assign) BOOL shouldShowAnimation;
 
 @property (nonatomic, assign) HZYFormViewCellOption options;
+@property (nonatomic, assign) HZYFormViewCellOption selectorRelatedView;
 
 @property (nonatomic, weak) UIView *seperator;
 @end

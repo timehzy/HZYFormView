@@ -62,6 +62,7 @@ typedef NS_OPTIONS(NSUInteger, HZYFormViewCellOption) {
 #define HZYFormViewCellSubDetailFont [UIFont systemFontOfSize:16]
 #define HZYFormViewCellSeperatorInsets UIEdgeInsetsMake(0, 16, 0, 0)
 #define HZYFormViewCellSeperatorColor [UIColor colorWithRed:221/255.0 green:221/255.0 blue:221/255.0 alpha:1/1.0]
+#define HZYFormViewCellAlertBorderColor [[UIColor redColor] colorWithAlphaComponent:.6]
 
 /* cell accessory key */
 extern NSString *const HZYFormCellAccessoryActionButton;//用于为cell添加按钮，这个按钮将出现在cell末端，必须使用HZYFormButton, 设置width属性以保证布局正确
@@ -79,7 +80,11 @@ extern NSString *const HZYFormCellNewAddedImageIndexKey;
 extern NSString *const HZYFormCellDeletedImageIndexKey;
 extern NSString *const HZYFormCellDeletedImageRemainCountKey;
 
-/* other key */
+/* value key */
 extern NSString *const HZYFormViewCellValueBeginDateKey;
 extern NSString *const HZYFormViewCellValueEndDateKey;
+extern NSString *const HZYFormViewCellValueDistrictNameKey;
+extern NSString *const HZYFormViewCellValueCityNameKey;
+extern NSString *const HZYFormViewCellValueProvinceNameKey;
+
 #endif /* HZYFormViewTypeDefine_h */

@@ -17,10 +17,13 @@ NSString *const HZYFormCellNewAddedImageIndexKey = @"HZYFormCellNewAddedImageInd
 NSString *const HZYFormCellDeletedImageIndexKey = @"HZYFormCellDeletedImageIndexKey";
 NSString *const HZYFormCellDeletedImageRemainCountKey = @"HZYFormCellDeletedImageRemainCountKey";
 NSInteger const HZYFormCellSeperatorTag = 3313;
+NSString *const HZYFormViewCellValueDistrictNameKey = @"HZYFormViewCellValueDistrictNameKey";
+NSString *const HZYFormViewCellValueCityNameKey = @"HZYFormViewCellValueCityNameKey";
+NSString *const HZYFormViewCellValueProvinceNameKey = @"HZYFormViewCellValueProvinceNameKey";
 
 NSNotificationName const HZYFormCellImageDidAddedNotification = @"HZYFormCellImageDidAddedNotification";
 NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellImageDidDeletedNotification";
-@interface HZYFormViewCell ()<UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface HZYFormViewCell ()<UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate>
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, weak) UIView *dateBgView;
 @end
@@ -35,6 +38,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         _subViewStringTagDict = [NSMutableDictionary dictionary];
         _tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction)];
         _options = HZYFormViewCellOptions;
+        _selectorRelatedView = HZYFormViewCellContentInputField;
         [self addGestureRecognizer:_tapGesture];
     }
     return self;
@@ -150,8 +154,9 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
             return ((HZYFormInputView*)subView).value;
         case HZYFormViewCellContentInputField:
             return ((HZYFormInputField*)subView).text;
-        case HZYFormViewCellContentActionButton:
         case HZYFormViewCellContentCitySelector:
+            return cell.cityDict;
+        case HZYFormViewCellContentActionButton:
             NSAssert(0, @"not support for get value in such view");
             return nil;
     }
@@ -233,16 +238,22 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
                                                                 HZYFormCellNewAddedImageIndexKey : [NSNumber numberWithInteger:index]}];
 }
 
-- (void)picturePicker:(HZYPicturePickerView *)picker imageDidSelected:(UIImage *)image {
-    
-}
-
 - (void)picturePicker:(HZYPicturePickerView *)picker imageDeletedAtIndex:(NSUInteger)index {
     
     [[NSNotificationCenter defaultCenter]postNotificationName:HZYFormCellImageDidDeletedNotification
                                                        object:self
                                                      userInfo:@{HZYFormCellDeletedImageIndexKey : [NSNumber numberWithInteger:index],
                                                                 HZYFormCellDeletedImageRemainCountKey : [NSNumber numberWithInteger:picker.pictures.count]}];
+}
+
+#pragma mark - UITextFieldDelegate
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField.returnKeyType == UIReturnKeyNext) {
+        if (self.nextEditAction) {
+            self.nextEditAction();
+        }
+    }
+    return YES;
 }
 
 #pragma mark - override
@@ -255,6 +266,9 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
     [_subViewTypeDict setObject:view forKey:[NSNumber numberWithInteger:view.type]];
     if (view.type & HZYFormViewCellContentMultiPhotoPicker) {
         self.tapGesture.enabled = NO;
+    }
+    if (view.type & HZYFormViewCellContentInputField) {
+        ((HZYFormInputField *)view).delegate = self;
     }
 }
 
@@ -309,7 +323,11 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         [view setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
     }else{
         [view mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.leading.equalTo(self).offset(16);
+            if (self.options & HZYFormViewCellTitleIcon) {
+                make.leading.equalTo([self subViewForType:HZYFormViewCellTitleIcon].mas_trailing).offset(8);
+            }else{
+                make.leading.equalTo(self).offset(16);
+            }
             make.top.equalTo(self);
             make.bottom.equalTo(self);
         }];
@@ -395,10 +413,9 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         [self subViewForType:HZYFormViewCellContentMultiSelector] ||
         [self subViewForType:HZYFormViewCellContentDatePickerDefault] ||
         [self subViewForType:HZYFormViewCellContentDatePickerAtoB]) {
-        for (UIView *view in self.subviews) {
-            if ([view isKindOfClass:[HZYFormInputField class]]) {
-                view.userInteractionEnabled = NO;
-            }
+        HZYFormInputField *inputField = (HZYFormInputField *)[self subViewForType:HZYFormViewCellContentInputField];
+        if (inputField) {
+            inputField.userInteractionEnabled = NO;
         }
     }
 }
@@ -530,13 +547,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 }
 
 - (void)setTextForLabelOrInputView:(NSString *)text {
-    if ([self subViewForType:HZYFormViewCellContentInputField]) {
-        ((HZYFormInputField *)[self subViewForType:HZYFormViewCellContentInputField]).text = text;
-    }else if ([self subViewForType:HZYFormViewCellContentDetail]) {
-        ((HZYFormLabel *)[self subViewForType:HZYFormViewCellContentDetail]).text = text;
-    }else if ([self subViewForType:HZYFormViewCellContentSubDetail]) {
-        ((HZYFormLabel *)[self subViewForType:HZYFormViewCellContentSubDetail]).text = text;
-    }
+    ((HZYFormLabel *)[self subViewForType:self.selectorRelatedView]).text = text;
 }
 
 #pragma mark - getter & setter
@@ -547,6 +558,14 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
     _visible = visible;
     if (visible) {
         [self showAnimation];
+    }
+}
+
+- (void)setSelectorRelatedView:(HZYFormViewCellOption)selectorRelatedView {
+    _selectorRelatedView = selectorRelatedView;
+    HZYFormInputField *inputField = (HZYFormInputField *)[self subViewForType:HZYFormViewCellContentInputField];
+    if (inputField) {
+        inputField.userInteractionEnabled = YES;
     }
 }
 @end

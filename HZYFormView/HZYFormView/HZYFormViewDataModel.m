@@ -22,6 +22,7 @@
 @implementation HZYFormViewDataModel
 - (instancetype)init {
     if (self = [super init]) {
+        _textAlignment = NSTextAlignmentRight;
         _cellSeperatorInsets = HZYFormViewCellSeperatorInsets;
     }
     return self;
@@ -50,6 +51,20 @@
     return self.cellArray[section][row];
 }
 
+- (NSIndexPath *)indexPathOfCell:(HZYFormViewCell *)cell {
+    if (!cell) {
+        return nil;
+    }
+    for (NSInteger i=0; i<self.cellArray.count; i++) {
+        for (NSInteger j=0; j<[self.cellArray[i] count]; j++) {
+            if ([self.cellArray[i][j] isEqual:cell]) {
+                return [NSIndexPath indexPathForRow:j inSection:i];
+            }
+        }
+    }
+    return nil;
+}
+
 - (void)setSectionHeaderView:(UIView *)view forSection:(NSUInteger)section {
     self.sectionHeaderViewArray[section] = view;
 }
@@ -76,20 +91,6 @@
         }
     }
     return _sectionHeaderViewArray;
-}
-
-- (UIColor *)cellBackgroundColor {
-    if (!_cellBackgroundColor) {
-        _cellBackgroundColor = HZYFormViewCellBackgroundColor;
-    }
-    return _cellBackgroundColor;
-}
-
-- (UIColor *)cellSeperatorColor {
-    if (!_cellSeperatorColor) {
-        _cellSeperatorColor = HZYFormViewCellSeperatorColor;
-    }
-    return _cellSeperatorColor;
 }
 
 - (UIFont *)titleFont {
@@ -160,5 +161,24 @@
         _subDetailTextColor = HZYFormViewCellSubDetailTextColor;
     }
     return _subDetailTextColor;
+}
+
+
+- (UIColor *)cellBackgroundColor {
+    if (!_cellBackgroundColor) {
+        _cellBackgroundColor = HZYFormViewCellBackgroundColor;
+    }
+    return _cellBackgroundColor;
+}
+
+- (UIColor *)cellSeperatorColor {
+    if (!_cellSeperatorColor) {
+        _cellSeperatorColor = HZYFormViewCellSeperatorColor;
+    }
+    return _cellSeperatorColor;
+}
+
+- (void)setTextAlignment:(NSTextAlignment)textAlignment {
+    _textAlignment = textAlignment;
 }
 @end

@@ -21,6 +21,7 @@
 #pragma mark - dataSource
 // 一次性设置每个cell的值
 @property (nonatomic, copy) NSArray *titles;
+@property (nonatomic, copy) NSArray *icons;
 @property (nonatomic, copy) NSArray *placeholders;
 @property (nonatomic, copy) NSArray *inputTexts;
 @property (nonatomic, copy) NSArray *details;
@@ -73,14 +74,24 @@
 #pragma mark - cell's subviews
 - (void)setInputEnable:(BOOL)enable atIndexPath:(NSIndexPath *)indexPath;
 - (void)setKeyboardType:(UIKeyboardType)type atIndexPath:(NSIndexPath *)indexPath;
-
+- (void)setInputFieldAlignment:(NSTextAlignment)alignment;
+- (void)setSelectorRelatedView:(HZYFormViewCellOption)viewOption forPath:(NSIndexPath *)indexPath;
 #pragma mark - check
 /// 检测inputField和inputText是否为空，返回为空的cell的indexPath
 - (NSArray<NSIndexPath *> *)checkIsEmpty:(NSArray<NSIndexPath *> *)indexPaths;
 /// 将cell的输入框标红，用于提示输入
 - (void)setCellInputEmptyAlert:(NSArray<NSIndexPath *> *)rows;
 
-#pragma styles
+#pragma mark - 试验性功能
+/// 一个cell出现的动画
+@property (nonatomic, assign) BOOL cellShowAnimation;
+/// 点击return自动输入下一个cell
+@property (nonatomic, assign) BOOL autoNext;
+
+@end
+
+
+@interface HZYFormView (HZYFormViewStyleSetting)
 - (void)setCellBackgroundColor:(UIColor *)color;
 - (void)setCellSeperatorInsets:(UIEdgeInsets)insets;
 - (void)setCellSeperatorColor:(UIColor *)color;
@@ -95,8 +106,4 @@
 - (void)setDetailTextColor:(UIColor *)detailTextColor;
 - (void)setSubDetailFont:(UIFont *)subDetailFont;
 - (void)setSubDetailTextColor:(UIColor *)subDetailTextColor;
-#pragma mark - 试验性功能
-/// 一个cell出现的动画
-@property (nonatomic, assign) BOOL cellShowAnimation;
 @end
-

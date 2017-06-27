@@ -29,6 +29,15 @@
 - (HZYFormViewCell *)createCellSubviews:(HZYFormViewCell *)cell accessory:(NSDictionary *)accessory atSection:(NSUInteger)i row:(NSUInteger)j {
     HZYFormViewCellOption options = cell.options;
     //添加title
+    if (options & HZYFormViewCellTitleIcon) {
+        HZYFormImageView *icon = [HZYFormImageView new];
+        icon.contentMode = UIViewContentModeCenter;
+        icon.type = HZYFormViewCellTitleIcon;
+        if (self.dataModel.icons.count > i && [self.dataModel.icons[i] count] > j) {
+            icon.image = self.dataModel.icons[i][j];
+        }
+        [cell addSubview:icon];
+    }
     if (options & HZYFormViewCellTitleText) {
         NSString *title;
         if (self.dataModel.titles.count > i && [self.dataModel.titles[i] count] > j) {
@@ -118,6 +127,7 @@
             placeholder = self.dataModel.placeholders[i][j];
         }
         HZYFormInputField *inputField = [self createInputField:placeholder text:inputText];
+        inputField.textAlignment = self.dataModel.textAlignment;
         [cell addSubview:inputField];
     }
     if (options & HZYFormViewCellContentInputView) {
@@ -183,12 +193,4 @@
     NSDictionary *attribute = @{NSFontAttributeName : font};
     return [text boundingRectWithSize:maxSize options:NSStringDrawingUsesLineFragmentOrigin attributes:attribute context:nil].size;
 }
-
-#pragma mark - Action
-
-
-
-#pragma mark - Getter & Setter
-
-
 @end

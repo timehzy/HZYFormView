@@ -25,6 +25,7 @@
         self.layer.cornerRadius = 8;
         self.layer.borderWidth = 2;
         self.layer.borderColor = [UIColor clearColor].CGColor;
+        self.returnKeyType = UIReturnKeyNext;
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(beginEdit:) name:UITextFieldTextDidBeginEditingNotification object:nil];
     }
     return self;
@@ -67,9 +68,11 @@
 }
 
 - (void)setPlaceholder:(UIImage *)placeholder {
-    _placeholder = placeholder;
-    if (!self.image && [placeholder isKindOfClass:[UIImage class]]) {
-        self.image = placeholder;
+    if ([placeholder isKindOfClass:[UIImage class]]) {
+        _placeholder = placeholder;
+        if (!self.image) {
+            self.image = placeholder;
+        }
     }
 }
 
@@ -131,6 +134,15 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (BOOL)becomeFirstResponder {
+    if (_isPlaceholder) {
+        self.textColor = [UIColor blackColor];
+        self.text = nil;
+    }
+    self.layer.borderColor = [UIColor clearColor].CGColor;
+    return [super becomeFirstResponder];
 }
 
 - (void)beginEdit:(NSNotification *)noty {
