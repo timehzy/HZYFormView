@@ -51,6 +51,10 @@
     return self.cellArray[section][row];
 }
 
+- (void)replaceCell:(HZYFormViewCell *)cell forRow:(NSUInteger)row inSection:(NSUInteger)section {
+    [self.cellArray[section] replaceObjectAtIndex:row withObject:cell];
+}
+
 - (NSIndexPath *)indexPathOfCell:(HZYFormViewCell *)cell {
     if (!cell) {
         return nil;

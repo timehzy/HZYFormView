@@ -65,7 +65,7 @@ typedef NS_OPTIONS(NSUInteger, HZYFormViewCellOption) {
 #define HZYFormViewCellAlertBorderColor [[UIColor redColor] colorWithAlphaComponent:.6]
 
 /* cell accessory key */
-extern NSString *const HZYFormCellAccessoryActionButton;//用于为cell添加按钮，这个按钮将出现在cell末端，必须使用HZYFormButton, 设置width属性以保证布局正确
+extern NSString *const HZYFormCellAccessoryView;//用于为cell添加按钮，这个按钮将出现在cell末端，必须使用HZYFormButton, 设置width属性以保证布局正确
 
 /* notifications */
 /// image added in cell

@@ -15,6 +15,7 @@
 
 - (void)setCell:(HZYFormViewCell *)cell forRow:(NSUInteger)row inSection:(NSUInteger)section;
 - (HZYFormViewCell *)getCellForRow:(NSUInteger)row inSection:(NSUInteger)section;
+- (void)replaceCell:(HZYFormViewCell *)cell forRow:(NSUInteger)row inSection:(NSUInteger)section;
 - (NSIndexPath *)indexPathOfCell:(HZYFormViewCell *)cell;
 
 - (void)setSectionRowCount:(NSArray *)array;

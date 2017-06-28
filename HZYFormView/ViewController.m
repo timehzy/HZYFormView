@@ -24,12 +24,24 @@
     HZYFormView *formView = [HZYFormView formViewWithFrame:CGRectOffset(self.view.bounds, 0, 20) sectionRows:@[@1, @2, @1, @1]];
     formView.titles = @[@[@"姓名"], @[@"性别", @"爱好"], @[@"头像"], @[@"自拍"]];
     formView.placeholders = @[@[@"填写姓名"], @[@"选择性别", @"选择爱好（多选）"], @[[UIImage imageNamed:@"lss"]]];
-    [formView setCellOptions:HZYFormViewCellContentSingleSelector | HZYFormViewCellContentInputField | HZYFormViewCellTitleText forRowsAtIndexPath:@[[NSIndexPath indexPathForRow:0 inSection:1]]];
-    [formView setCellOptions:HZYFormViewCellContentMultiSelector | HZYFormViewCellContentInputField | HZYFormViewCellTitleText forRowsAtIndexPath:@[[NSIndexPath indexPathForRow:1 inSection:1]]];
-    [formView setCellOptions:HZYFormViewCellContentSinglePhotoPicker | HZYFormViewCellTitleText forRowsAtIndexPath:@[[NSIndexPath indexPathForRow:0 inSection:2]]];
-    [formView setCellOptions:HZYFormViewCellContentMultiPhotoPicker | HZYFormViewCellTitleText forRowsAtIndexPath:@[[NSIndexPath indexPathForRow:0 inSection:3]]];
-    [formView setContentValue:@[@"男", @"女", @"其他"] forCellOptions:HZYFormViewCellContentSingleSelector atIndexPath:[NSIndexPath indexPathForRow:0 inSection:1]];
-    [formView setContentValue:@[@"吃饭", @"睡觉", @"玩游戏", @"写代码"] forCellOptions:HZYFormViewCellContentMultiSelector atIndexPath:[NSIndexPath indexPathForRow:1 inSection:1]];
+    [formView configCellForRow:0 inSection:1 settings:^(HZYFormViewConfigurator *set) {
+        [set options:HZYFormViewCellContentSingleSelector | HZYFormViewCellContentInputField | HZYFormViewCellTitleText];
+    } values:^(HZYFormViewConfigurator *set) {
+        [set value:@[@"男", @"女", @"其他"] forOption:HZYFormViewCellContentMultiSelector];
+    }];
+
+    [formView configCellForRow:1 inSection:1 settings:^(HZYFormViewConfigurator *set) {
+        [set options:HZYFormViewCellContentMultiSelector | HZYFormViewCellContentInputField | HZYFormViewCellTitleText];
+    } values:^(HZYFormViewConfigurator *set) {
+        [set value:@[@"吃饭", @"睡觉", @"玩游戏", @"写代码"] forOption:HZYFormViewCellContentMultiSelector];
+    }];
+    [formView configCellForRow:0 inSection:2 settings:^(HZYFormViewConfigurator *set) {
+        [set options:HZYFormViewCellContentSinglePhotoPicker | HZYFormViewCellTitleText];
+    }];
+    [formView configCellForRow:0 inSection:3 settings:^(HZYFormViewConfigurator *set) {
+        [set options:HZYFormViewCellContentMultiPhotoPicker | HZYFormViewCellTitleText];
+    }];
+    
     [self.view addSubview:formView];
     self.formView = formView;
     

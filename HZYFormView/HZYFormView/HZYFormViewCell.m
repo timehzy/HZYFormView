@@ -10,6 +10,7 @@
 #import "Masonry.h"
 #import "MMSelectorView.h"
 #import "HZYDatePicker.h"
+#import "HZYFormViewDataModel.h"
 
 NSString *const HZYFormCellNewAddedImageKey = @"HZYFormCellNewAddedImageKey";
 NSString *const HZYFormCellNewAddedImageCellTitleKey = @"HZYFomeCellNewAddedImageCellTitleKey";
@@ -23,10 +24,12 @@ NSString *const HZYFormViewCellValueProvinceNameKey = @"HZYFormViewCellValueProv
 
 NSNotificationName const HZYFormCellImageDidAddedNotification = @"HZYFormCellImageDidAddedNotification";
 NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellImageDidDeletedNotification";
+
 @interface HZYFormViewCell ()<UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate>
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, weak) UIView *dateBgView;
 @end
+
 @implementation HZYFormViewCell{
     NSMutableDictionary *_subViewStringTagDict;
     NSMutableDictionary *_subViewTypeDict;
@@ -37,8 +40,8 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         _subViewTypeDict = [NSMutableDictionary dictionary];
         _subViewStringTagDict = [NSMutableDictionary dictionary];
         _tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction)];
-        _options = HZYFormViewCellOptions;
         _selectorRelatedView = HZYFormViewCellContentInputField;
+        [self setOptions:HZYFormViewCellOptions];
         [self addGestureRecognizer:_tapGesture];
     }
     return self;
@@ -155,7 +158,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         case HZYFormViewCellContentInputField:
             return ((HZYFormInputField*)subView).text;
         case HZYFormViewCellContentCitySelector:
-            return cell.cityDict;
+            return self.cityDict;
         case HZYFormViewCellContentActionButton:
             NSAssert(0, @"not support for get value in such view");
             return nil;
@@ -568,5 +571,20 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         inputField.userInteractionEnabled = YES;
     }
 }
+
+- (void)setOptions:(HZYFormViewCellOption)options {
+    _options = options;
+    CGRect frame = self.frame;
+    if (options & HZYFormViewCellContentSinglePhotoPicker) {
+        frame.size.height = 166;
+    }else if (options & HZYFormViewCellContentInputView) {
+        frame.size.height = 120;
+    }else if (options & HZYFormViewCellContentMultiPhotoPicker) {
+        CGFloat itemWH = ([UIScreen mainScreen].bounds.size.width - 16*2 -3*8) / 4;
+        frame.size.height = itemWH + 12 + 8 + 4 + 28;
+    }
+    self.frame = frame;
+}
+
 @end
 

@@ -26,24 +26,20 @@
 }
 
 #pragma mark - Private Method
-- (HZYFormViewCell *)createCellSubviews:(HZYFormViewCell *)cell accessory:(NSDictionary *)accessory atSection:(NSUInteger)i row:(NSUInteger)j {
+- (HZYFormViewCell *)createCellSubviews:(HZYFormViewCell *)cell accessory:(NSDictionary *)accessory {
     HZYFormViewCellOption options = cell.options;
+    if (cell.subviews.count > 0) {
+        [cell.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    }
     //添加title
     if (options & HZYFormViewCellTitleIcon) {
         HZYFormImageView *icon = [HZYFormImageView new];
         icon.contentMode = UIViewContentModeCenter;
         icon.type = HZYFormViewCellTitleIcon;
-        if (self.dataModel.icons.count > i && [self.dataModel.icons[i] count] > j) {
-            icon.image = self.dataModel.icons[i][j];
-        }
         [cell addSubview:icon];
     }
     if (options & HZYFormViewCellTitleText) {
-        NSString *title;
-        if (self.dataModel.titles.count > i && [self.dataModel.titles[i] count] > j) {
-            title = self.dataModel.titles[i][j];
-        }
-        HZYFormLabel *titleLabel = [self createTitleLabel:title];
+        HZYFormLabel *titleLabel = [self createTitleLabel];
         [cell addSubview:titleLabel];
     }
     
@@ -53,10 +49,6 @@
         indicator.contentMode = UIViewContentModeCenter;
         indicator.type = HZYFormViewCellContentIndicator;
         [cell addSubview:indicator];
-    }
-    if ([accessory objectForKey:HZYFormCellAccessoryActionButton]) {
-        HZYFormButton *actionBtn = [accessory objectForKey:HZYFormCellAccessoryActionButton];
-        [cell addSubview:actionBtn];
     }
     if (options & HZYFormViewCellContentCheckMark) {
         
@@ -85,48 +77,23 @@
     if (options & HZYFormViewCellContentMultiPhotoPicker) {
         HZYPicturePickerView *picPicker = [HZYPicturePickerView new];
         picPicker.pickerDelegate = cell;
-        if (self.dataModel.pictures.count > i && [self.dataModel.pictures[i] count] > j) {
-            if ([[self.dataModel.pictures[i][j] firstObject] isKindOfClass:[UIImage class]]) {
-                picPicker.pictures = self.dataModel.pictures[i][j];
-            }else{
-                picPicker.urls = self.dataModel.pictures[i][j];
-            }
-        }
         [cell addSubview:picPicker];
     }
     if (options & HZYFormViewCellContentSinglePhotoPicker) {
         HZYFormImageView *imageView = [HZYFormImageView new];
         imageView.type = HZYFormViewCellContentSinglePhotoPicker;
-        if (self.dataModel.pictures.count > i && [self.dataModel.pictures[i] count] > j) {
-            if ([self.dataModel.pictures[i][j] isKindOfClass:[UIImage class]]) {
-                imageView.image = self.dataModel.pictures[i][j];
-            }else{
-                imageView.url = self.dataModel.pictures[i][j];
-            }
-        }
-        if (self.dataModel.placeholders.count > i && [self.dataModel.placeholders[i] count] > j) {
-            imageView.placeholder = self.dataModel.placeholders[i][j];
-        }
         [cell addSubview:imageView];
     }
     if (options & HZYFormViewCellContentSubDetail) {
-        HZYFormLabel *subDetail = [self createSubDetailLabel:self.dataModel.subDetails[i][j]];
+        HZYFormLabel *subDetail = [self createSubDetailLabel];
         [cell addSubview:subDetail];
     }
     if (options & HZYFormViewCellContentDetail) {
-        HZYFormLabel *detail = [self createDetailLabel:self.dataModel.details[i][j]];
+        HZYFormLabel *detail = [self createDetailLabel];
         [cell addSubview:detail];
     }
     if (options & HZYFormViewCellContentInputField) {
-        NSString *inputText;
-        NSString *placeholder;
-        if (self.dataModel.inputTexts.count > 0) {
-            inputText = self.dataModel.inputTexts[i][j];
-        }
-        if (self.dataModel.placeholders.count > i && [self.dataModel.placeholders[i] count] > j && [self.dataModel.placeholders[i][j] isKindOfClass:[NSString class]]) {
-            placeholder = self.dataModel.placeholders[i][j];
-        }
-        HZYFormInputField *inputField = [self createInputField:placeholder text:inputText];
+        HZYFormInputField *inputField = [self createInputField];
         inputField.textAlignment = self.dataModel.textAlignment;
         [cell addSubview:inputField];
     }
@@ -135,14 +102,6 @@
         inputView.textColor = self.dataModel.inputViewTextColor;
         inputView.font = self.dataModel.inputViewFont;
         inputView.type = HZYFormViewCellContentInputView;
-        if (self.dataModel.placeholders.count > i && [self.dataModel.placeholders[i] count] > j) {
-            inputView.placeholder = self.dataModel.placeholders[i][j];
-        }else{
-            inputView.placeholder = [NSString stringWithFormat:@"%@", self.dataModel.titles[i][j]];
-        }
-        if (self.dataModel.inputTexts.count > 0) {
-            inputView.text = self.dataModel.inputTexts[i][j];
-        }
         [cell addSubview:inputView];
     }
     
@@ -151,17 +110,16 @@
 }
 
 
-- (HZYFormLabel *)createTitleLabel:(NSString *)title {
+- (HZYFormLabel *)createTitleLabel {
     HZYFormLabel *titleLabel = [HZYFormLabel labelWithType:HZYFormViewCellTitleText];
     titleLabel.font = self.dataModel.titleFont;
     titleLabel.tag = 10001;
-    titleLabel.text = title;
     titleLabel.textColor = self.dataModel.titleColor;
     return titleLabel;
 }
 
-- (HZYFormLabel *)createDetailLabel:(NSString *)content {
-    HZYFormLabel *label = [self createTitleLabel:content];
+- (HZYFormLabel *)createDetailLabel {
+    HZYFormLabel *label = [self createTitleLabel];
     label.type = HZYFormViewCellContentDetail;
     label.textColor = self.dataModel.detailTextColor;
     label.textAlignment = NSTextAlignmentRight;
@@ -169,28 +127,21 @@
     return label;
 }
 
-- (HZYFormLabel *)createSubDetailLabel:(NSString *)content {
-    HZYFormLabel *label = [self createTitleLabel:content];
+- (HZYFormLabel *)createSubDetailLabel {
+    HZYFormLabel *label = [self createTitleLabel];
     label.textColor = self.dataModel.subDetailTextColor;
     label.type = HZYFormViewCellContentSubDetail;
     label.font = self.dataModel.subDetailFont;
     return label;
 }
 
-- (HZYFormInputField *)createInputField:(NSString *)placeholder text:(NSString *)text {
+- (HZYFormInputField *)createInputField {
     HZYFormInputField *inputField = [HZYFormInputField new];
     inputField.font = self.dataModel.inputFieldFont;
     inputField.textColor = self.dataModel.inputFieldTextColor;
     inputField.textAlignment = NSTextAlignmentRight;
     inputField.tag = 10002;
-    inputField.placeholder = placeholder;
-    inputField.text = text;
     inputField.type = HZYFormViewCellContentInputField;
     return inputField;
-}
-
-- (CGSize)sizeWithText:(NSString *)text font:(UIFont *)font maxSize:(CGSize)maxSize {
-    NSDictionary *attribute = @{NSFontAttributeName : font};
-    return [text boundingRectWithSize:maxSize options:NSStringDrawingUsesLineFragmentOrigin attributes:attribute context:nil].size;
 }
 @end

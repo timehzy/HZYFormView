@@ -12,8 +12,10 @@
 #import "HZYFormViewDefine.h"
 
 extern NSInteger const HZYFormCellSeperatorTag;
-
+@class HZYFormViewDataModel;
 @interface HZYFormViewCell : UIView<HZYPicturePickerViewDelegate>
+- (instancetype)initWithFrame:(CGRect)frame;
+
 - (void)layoutFormViews;
 - (UIView<HZYFormCellSubViewProtocol> *)subviewForStringTag:(NSString *)tag;
 - (UIView<HZYFormCellSubViewProtocol> *)subViewForType:(HZYFormViewCellOption)type;
@@ -30,13 +32,12 @@ extern NSInteger const HZYFormCellSeperatorTag;
 @property (nonatomic, copy) NSArray *selectList;
 /// 选择器选中的index数组
 @property (nonatomic, copy) NSArray *selectedArray;
-
 /// 如果使用AtoB日期选择器，则这两个参数有效，使用single日期选择器，则startDate有效
 @property (nonatomic, strong) NSDate *startDate;
 @property (nonatomic, strong) NSDate *endDate;
-
 /// 返回选中的省市区字典
 @property (nonatomic, copy) NSDictionary *cityDict;
+
 
 @property (nonatomic, assign, getter=isVisible) BOOL visible;
 @property (nonatomic, assign) BOOL shouldShowAnimation;
@@ -45,5 +46,7 @@ extern NSInteger const HZYFormCellSeperatorTag;
 @property (nonatomic, assign) HZYFormViewCellOption selectorRelatedView;
 
 @property (nonatomic, weak) UIView *seperator;
+
+
 @end
 
