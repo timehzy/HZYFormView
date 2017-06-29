@@ -46,7 +46,5 @@ extern NSInteger const HZYFormCellSeperatorTag;
 @property (nonatomic, assign) HZYFormViewCellOption selectorRelatedView;
 
 @property (nonatomic, weak) UIView *seperator;
-
-
 @end
 

@@ -25,6 +25,7 @@
 
 - (void)setSectionHeaderView:(UIView *)view forSection:(NSUInteger)section;
 - (HZYFormSectionHeaderView *)getSectionHeaderViewForSection:(NSUInteger)section;
+- (void)replaceHeaderView:(HZYFormSectionHeaderView *)headerView forSection:(NSUInteger)section;
 
 - (void)setTitle:(NSString *)title forRow:(NSUInteger)row inSection:(NSUInteger)section;
 - (void)setIcon:(UIImage *)icon forRow:(NSUInteger)row inSection:(NSUInteger)section;

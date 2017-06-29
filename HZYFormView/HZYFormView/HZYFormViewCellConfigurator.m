@@ -6,11 +6,11 @@
 //  Copyright © 2017年 Michael. All rights reserved.
 //
 
-#import "HZYFormViewConfigurator.h"
+#import "HZYFormViewCellConfigurator.h"
 #import "HZYFormViewCell.h"
 #import "HZYFormViewDataModel.h"
 
-@interface HZYFormViewConfigurator ()
+@interface HZYFormViewCellConfigurator ()
 @property (nonatomic, strong) HZYFormViewCell *cell;
 @property (nonatomic, strong) HZYFormViewDataModel *dataModel;
 @property (nonatomic, assign) NSUInteger row;
@@ -18,7 +18,7 @@
 
 @end
 
-@implementation HZYFormViewConfigurator
+@implementation HZYFormViewCellConfigurator
 #pragma mark - public
 - (instancetype)initWithDataModel:(HZYFormViewDataModel *)dataModel forRow:(NSUInteger)row inSection:(NSUInteger)section {
     if (self = [super init]) {
@@ -98,14 +98,6 @@
 
 - (void)checkmark:(HZYFormViewCheckmarkState)state {
     [self.dataModel setCheckMark:state forRow:self.row inSection:self.section];
-}
-
-- (void)headerHeight:(CGFloat)height {
-    
-}
-
-- (void)headerTitle:(NSString *)title content:(NSString *)content {
-    
 }
 
 #pragma mark - private

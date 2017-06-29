@@ -242,11 +242,10 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
 }
 
 - (void)picturePicker:(HZYPicturePickerView *)picker imageDeletedAtIndex:(NSUInteger)index {
-    
     [[NSNotificationCenter defaultCenter]postNotificationName:HZYFormCellImageDidDeletedNotification
                                                        object:self
                                                      userInfo:@{HZYFormCellDeletedImageIndexKey : [NSNumber numberWithInteger:index],
-                                                                HZYFormCellDeletedImageRemainCountKey : [NSNumber numberWithInteger:picker.pictures.count]}];
+                                                                HZYFormCellDeletedImageRemainCountKey : [NSNumber numberWithInteger:picker.value.count]}];
 }
 
 #pragma mark - UITextFieldDelegate

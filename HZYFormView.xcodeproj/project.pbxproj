@@ -26,7 +26,8 @@
 		4C56AE371F0256C3006D1598 /* HZYPicturePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C56AE351F0256C3006D1598 /* HZYPicturePickerView.m */; };
 		4C56AE3D1F0257FF006D1598 /* HZYImageScanView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C56AE3A1F0257FF006D1598 /* HZYImageScanView.m */; };
 		4C56AE3E1F0257FF006D1598 /* UIImageView+HZYImageScanView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C56AE3C1F0257FF006D1598 /* UIImageView+HZYImageScanView.m */; };
-		4C56AE411F025D21006D1598 /* HZYFormViewConfigurator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C56AE401F025D21006D1598 /* HZYFormViewConfigurator.m */; };
+		4C56AE411F025D21006D1598 /* HZYFormViewCellConfigurator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C56AE401F025D21006D1598 /* HZYFormViewCellConfigurator.m */; };
+		4C56AE471F050874006D1598 /* HZYFormViewSectionHeaderConfigurator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C56AE461F050874006D1598 /* HZYFormViewSectionHeaderConfigurator.m */; };
 		4C7CB0B01EE8153C00F9737B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7CB0AF1EE8153C00F9737B /* main.m */; };
 		4C7CB0B31EE8153C00F9737B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7CB0B21EE8153C00F9737B /* AppDelegate.m */; };
 		4C7CB0B61EE8153C00F9737B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7CB0B51EE8153C00F9737B /* ViewController.m */; };
@@ -93,8 +94,10 @@
 		4C56AE3A1F0257FF006D1598 /* HZYImageScanView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZYImageScanView.m; sourceTree = "<group>"; };
 		4C56AE3B1F0257FF006D1598 /* UIImageView+HZYImageScanView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+HZYImageScanView.h"; sourceTree = "<group>"; };
 		4C56AE3C1F0257FF006D1598 /* UIImageView+HZYImageScanView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+HZYImageScanView.m"; sourceTree = "<group>"; };
-		4C56AE3F1F025D21006D1598 /* HZYFormViewConfigurator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZYFormViewConfigurator.h; sourceTree = "<group>"; };
-		4C56AE401F025D21006D1598 /* HZYFormViewConfigurator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZYFormViewConfigurator.m; sourceTree = "<group>"; };
+		4C56AE3F1F025D21006D1598 /* HZYFormViewCellConfigurator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZYFormViewCellConfigurator.h; sourceTree = "<group>"; };
+		4C56AE401F025D21006D1598 /* HZYFormViewCellConfigurator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZYFormViewCellConfigurator.m; sourceTree = "<group>"; };
+		4C56AE451F050874006D1598 /* HZYFormViewSectionHeaderConfigurator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZYFormViewSectionHeaderConfigurator.h; sourceTree = "<group>"; };
+		4C56AE461F050874006D1598 /* HZYFormViewSectionHeaderConfigurator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZYFormViewSectionHeaderConfigurator.m; sourceTree = "<group>"; };
 		4C7CB0AB1EE8153C00F9737B /* HZYFormView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HZYFormView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C7CB0AF1EE8153C00F9737B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4C7CB0B11EE8153C00F9737B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -264,8 +267,10 @@
 				4C7CB0CF1EE8154B00F9737B /* HZYFormVIewCellSubViewCreater.m */,
 				4C7CB0D21EE8154B00F9737B /* HZYFormViewDataModel.h */,
 				4C7CB0D31EE8154B00F9737B /* HZYFormViewDataModel.m */,
-				4C56AE3F1F025D21006D1598 /* HZYFormViewConfigurator.h */,
-				4C56AE401F025D21006D1598 /* HZYFormViewConfigurator.m */,
+				4C56AE3F1F025D21006D1598 /* HZYFormViewCellConfigurator.h */,
+				4C56AE401F025D21006D1598 /* HZYFormViewCellConfigurator.m */,
+				4C56AE451F050874006D1598 /* HZYFormViewSectionHeaderConfigurator.h */,
+				4C56AE461F050874006D1598 /* HZYFormViewSectionHeaderConfigurator.m */,
 				4C7CB0D01EE8154B00F9737B /* HZYFormViewCellSubViews.h */,
 				4C7CB0D11EE8154B00F9737B /* HZYFormViewCellSubViews.m */,
 				4C7CB0C81EE8154B00F9737B /* HZYFormSectionHeaderView.h */,
@@ -393,11 +398,12 @@
 				4C3924961EF283F10028CE81 /* UIButton+WebCache.m in Sources */,
 				4C3924941EF283F10028CE81 /* SDWebImageManager.m in Sources */,
 				4C7CB1041EE815D300F9737B /* NSArray+MASAdditions.m in Sources */,
-				4C56AE411F025D21006D1598 /* HZYFormViewConfigurator.m in Sources */,
+				4C56AE411F025D21006D1598 /* HZYFormViewCellConfigurator.m in Sources */,
 				4C7CB0DC1EE8154B00F9737B /* HZYFormViewCell.m in Sources */,
 				4C7CB1051EE815D300F9737B /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
 				4C56AE371F0256C3006D1598 /* HZYPicturePickerView.m in Sources */,
 				4C3924921EF283F10028CE81 /* SDWebImageDownloader.m in Sources */,
+				4C56AE471F050874006D1598 /* HZYFormViewSectionHeaderConfigurator.m in Sources */,
 				4C7CB0DF1EE8154B00F9737B /* HZYFormViewDataModel.m in Sources */,
 				4C3924901EF283F10028CE81 /* SDWebImageCompat.m in Sources */,
 				4C56AE3E1F0257FF006D1598 /* UIImageView+HZYImageScanView.m in Sources */,

@@ -126,7 +126,6 @@
         scanView.beginIndex = index;
         [scanView showWithAnimation];
     }
-    
 }
 
 #pragma mark - getter & setter

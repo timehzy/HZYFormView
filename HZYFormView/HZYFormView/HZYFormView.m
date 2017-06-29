@@ -12,7 +12,8 @@
 #import "HZYFormViewCell.h"
 #import "HZYFormVIewCellSubViewCreater.h"
 #import "HZYFormViewDataModel.h"
-#import "HZYFormViewConfigurator.h"
+#import "HZYFormViewCellConfigurator.h"
+#import "HZYFormViewSectionHeaderConfigurator.h"
 
 NSString *const HZYFormViewCellValueBeginDateKey = @"HZYFormViewCellValueBeginDateKey";
 NSString *const HZYFormViewCellValueEndDateKey = @"HZYFormViewCellValueEndDateKey";
@@ -31,8 +32,8 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     return view;
 }
 
-- (void)configCellForRow:(NSUInteger)row inSection:(NSUInteger)section settings:(void (^)(HZYFormViewConfigurator *))setting {
-    HZYFormViewConfigurator *setter = [[HZYFormViewConfigurator alloc] initWithDataModel:self.dataModel forRow:row inSection:section];
+- (void)configCellForRow:(NSUInteger)row inSection:(NSUInteger)section settings:(void (^)(HZYFormViewCellConfigurator *))setting {
+    HZYFormViewCellConfigurator *setter = [[HZYFormViewCellConfigurator alloc] initWithDataModel:self.dataModel forRow:row inSection:section];
     if (setting) {
         setting(setter);
         HZYFormViewCell *cell = [setter configedCell];
@@ -43,20 +44,18 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     }
 }
 
-- (void)configSection:(NSUInteger)section settings:(void (^)(HZYFormViewConfigurator *))setting {
-    
+- (void)configSection:(NSUInteger)section settings:(void (^)(HZYFormViewSectionHeaderConfigurator *))setting {
+    HZYFormViewSectionHeaderConfigurator *setter = [[HZYFormViewSectionHeaderConfigurator alloc] initWithDataModel:self.dataModel forSection:section];
+    if (setting) {
+        setting(setter);
+        HZYFormSectionHeaderView *header = [setter configedHeader];
+        [self.dataModel replaceHeaderView:header forSection:section];
+        [self reLayout:NO];
+    }
 }
 
 - (NSUInteger)numberOfRowsInSection:(NSUInteger)section {
     return [self.dataModel getRowCountInSection:section];;
-}
-
-- (NSArray<HZYFormViewCell *> *)visibleCells {
-    NSMutableArray *temp = [NSMutableArray array];
-    [self.dataModel enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
-        [temp addObject:cell];
-    }];
-    return temp.copy;
 }
 
 - (HZYFormViewCell *)cellAtIndexPath:(NSIndexPath *)indexPath {
@@ -64,55 +63,14 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     return [self.dataModel getCellForRow:indexPath.row inSection:indexPath.section];
 }
 
-- (void)hide:(BOOL)hidden cellAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths animate:(BOOL)animate {
-    for (NSIndexPath *path in indexPaths) {
-        [self.dataModel getCellForRow:path.row inSection:path.section].hidden = hidden;
-    }
-    [self reLayout:animate];
-}
-
-- (void)setHeaderHeight:(CGFloat)height forSection:(NSArray<NSNumber *> *)section {
-    for (NSInteger i=0; i<[self.dataModel getSectionCount]; i++) {
-        if (section.count == 0 || !section) {
-            [self changeHeightForView:[self.dataModel getSectionHeaderViewForSection:i] newHeight:height];
-        }else{
-            for (NSNumber *sectionIndex in section) {
-                if (sectionIndex.integerValue == i) {
-                    [self changeHeightForView:[self.dataModel getSectionHeaderViewForSection:i] newHeight:height];
-                }
-            }
-        }
-    }
-    [self reLayout:YES];
-}
-
-
-- (void)setHeaderTitle:(NSString *)title content:(NSString *)content forSection:(NSUInteger)section {
-    [self isIndexPathOutofBounds:[NSIndexPath indexPathForRow:NSUIntegerMax inSection:section]];
-    [self.dataModel getSectionHeaderViewForSection:section].titleLabel.text = title;
-    [self.dataModel getSectionHeaderViewForSection:section].contentLable.text = content;
-}
-
-- (void)setHeaderView:(UIView *)view forSection:(NSArray<NSNumber *> *)section {
-    for (NSInteger i=0; i<[self.dataModel getSectionCount]; i++) {
-        if (!section || section.count == 0) {
-            UIView *origin = [self.dataModel getSectionHeaderViewForSection:i];
-            view.frame = origin.frame;
-            [origin removeFromSuperview];
-            [self addSubview:view];
-            [self.dataModel setSectionHeaderView:view.copy forSection:i];
-        }else{
-            for (NSNumber *sectionIndex in section) {
-                if (sectionIndex.integerValue == i) {
-                    UIView *origin = [self.dataModel getSectionHeaderViewForSection:i];
-                    view.frame = origin.frame;
-                    [origin removeFromSuperview];
-                    [self addSubview:view];
-                    [self.dataModel setSectionHeaderView:view.copy forSection:i];
-                }
-            }
-        }
-    }
+- (void)setHeaderView:(UIView *)view forSection:(NSUInteger)section {
+    UIView *origin = [self.dataModel getSectionHeaderViewForSection:section];
+    CGRect frame = origin.frame;
+    frame.size.height = view.bounds.size.height;
+    view.frame = frame;
+    [self addSubview:view];
+    [origin removeFromSuperview];
+    [self.dataModel setSectionHeaderView:view.copy forSection:section];
 }
 
 - (void)setCustomViewAsCell:(UIView *)view atIndexPath:(NSIndexPath *)indexPath {
@@ -127,6 +85,13 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
 - (UIView *)headerViewForSection:(NSUInteger)section {
     [self isIndexPathOutofBounds:[NSIndexPath indexPathForRow:-1 inSection:section]];
     return [self.dataModel getSectionHeaderViewForSection:section];
+}
+
+- (void)hide:(BOOL)hidden cellAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths animate:(BOOL)animate {
+    for (NSIndexPath *path in indexPaths) {
+        [self.dataModel getCellForRow:path.row inSection:path.section].hidden = hidden;
+    }
+    [self reLayout:animate];
 }
 
 - (id)getValueFromCellOptions:(HZYFormViewCellOption)options atIndex:(NSIndexPath *)indexPath {
@@ -216,37 +181,7 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
 
-// 动画用
-- (void)willMoveToWindow:(UIWindow *)newWindow {
-    [super willMoveToWindow:newWindow];
-//    NSArray *cells = [self visibleCells];
-//    for (NSInteger i=0; i<cells.count; i++) {
-//        HZYFormViewCell *cell = cells[i];
-//        cell.transform = CGAffineTransformMakeTranslation(375, 0);
-//        [UIView animateWithDuration:.45 delay:10 + i*0.03 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-//            cell.transform = CGAffineTransformIdentity;
-//        } completion:^(BOOL finished) {
-//            
-//        }];
-//    }
-//    NSLog(@"a");
-}
-
 #pragma mark - private
-// 动画用
-- (void)setContentOffset:(CGPoint)contentOffset {
-    [super setContentOffset:contentOffset];
-    CGFloat up = contentOffset.y + 64;
-    CGFloat down = up + self.bounds.size.height - 64;
-    [self.dataModel enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
-        if ((cell.frame.origin.y > up && CGRectGetMaxY(cell.frame) < down) || (cell.frame.origin.y < up && CGRectGetMaxY(cell.frame) > up) || (CGRectGetMaxY(cell.frame) > down && cell.frame.origin.y < down)) {
-            cell.visible = YES;
-        }else{
-            cell.visible = NO;
-        }
-    }];
-}
-
 - (void)initVariable:(NSArray *)rowCountArray {
     _dataModel = [HZYFormViewDataModel new];
     [_dataModel setSectionRowCount:rowCountArray];
@@ -281,20 +216,8 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     self.contentSize = CGSizeMake(self.bounds.size.width, lastCellMaxY);
 }
 
-- (void)changeHeightForView:(UIView *)view newHeight:(CGFloat)height {
-    CGRect frame = view.frame;
-    frame.size.height = height;
-    view.frame = frame;
-}
-
-- (CGFloat)multiPhotoPickerHeightForNumberOfLine:(NSUInteger)lineNum {
-    CGFloat itemWH = ([UIScreen mainScreen].bounds.size.width - 16*2 -3*8) / 4;
-    return itemWH*lineNum + 12 + lineNum * 8 + 4 + 28;
-}
-
 - (HZYFormViewCell *)createCell:(CGFloat)cellY cellHeight:(CGFloat)cellHeight forRow:(NSUInteger)row inSection:(NSUInteger)section{
     HZYFormViewCell *view = [[HZYFormViewCell alloc]initWithFrame:CGRectMake(0, cellY, self.bounds.size.width, cellHeight)];
-    view.shouldShowAnimation = self.cellShowAnimation;
     view.backgroundColor = HZYFormViewCellBackgroundColor;
     __weak typeof(view)weakView = view;
     __weak typeof(self)weakSelf = self;
@@ -399,6 +322,11 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     return nil;
 }
 
+- (CGFloat)multiPhotoPickerHeightForNumberOfLine:(NSUInteger)lineNum {
+    CGFloat itemWH = ([UIScreen mainScreen].bounds.size.width - 16*2 -3*8) / 4;
+    return itemWH*lineNum + 12 + lineNum * 8 + 4 + 28;
+}
+
 
 #pragma mark - notification
 - (void)multiPicPickerDidAddImage:(NSNotification *)note {
@@ -439,14 +367,6 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     rect.origin.y = 0;
     rect.size.width = self.bounds.size.width;
     _headerView.frame = rect;
-}
-
-- (void)setCellShowAnimation:(BOOL)cellShowAnimation {
-    if (cellShowAnimation == _cellShowAnimation) {
-        return;
-    }
-    _cellShowAnimation = cellShowAnimation;
-    self.bounces = !cellShowAnimation;
 }
 
 - (void)setFooterView:(UIView *)footerView {

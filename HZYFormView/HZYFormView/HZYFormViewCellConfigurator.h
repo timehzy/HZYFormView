@@ -11,7 +11,7 @@
 
 @class HZYFormViewDataModel;
 @class HZYFormViewCell;
-@interface HZYFormViewConfigurator : NSObject
+@interface HZYFormViewCellConfigurator : NSObject
 - (instancetype)initWithDataModel:(HZYFormViewDataModel *)dataModel forRow:(NSUInteger)row inSection:(NSUInteger)section;
 - (HZYFormViewCell *)configedCell;
 
@@ -34,9 +34,4 @@
 - (void)selectList:(NSArray *)selectList;
 - (void)checkmark:(HZYFormViewCheckmarkState)state;
 
-/// 设置section headerView。section传nil可以统一设置所有section
-- (void)headerHeight:(CGFloat)height;
-/// 设置默认header的title和content，默认的headerView具有左右两个label
-- (void)headerTitle:(NSString *)title content:(NSString *)content;
-/// 设置headerView，section传nil可以设置全部
 @end

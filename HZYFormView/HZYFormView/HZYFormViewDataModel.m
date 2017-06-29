@@ -113,6 +113,10 @@
     return self.sectionHeaderViewArray[section];
 }
 
+- (void)replaceHeaderView:(HZYFormSectionHeaderView *)headerView forSection:(NSUInteger)section {
+    self.sectionHeaderViewArray[section] = headerView;
+}
+
 - (void)setupAllCellValue {
     [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
         [self setupCellValueForRow:row inSection:section];
@@ -666,5 +670,4 @@
         ((HZYFormLabel *)[cell subViewForType:HZYFormViewCellContentSubDetail]).textColor = subDetailTextColor;
     }];
 }
-
 @end
