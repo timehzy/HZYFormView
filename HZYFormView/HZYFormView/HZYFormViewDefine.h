@@ -37,11 +37,21 @@ typedef NS_OPTIONS(NSUInteger, HZYFormViewCellOption) {
     HZYFormViewCellContentCitySelector = 1 << 14,
 };
 
+typedef NS_ENUM(NSUInteger, HZYFormViewCheckmarkState) {
+    HZYFormViewCheckmarkNormal,
+    HZYFormViewCheckmarkSelected,
+    HZYFormViewCheckmarkDisabled,
+};
+
 @protocol HZYFormCellSubViewProtocol <NSObject>
 @property (nonatomic, assign) HZYFormViewCellOption type;
-
+@property (nonatomic, strong) id value;
 @optional;
 @property (nonatomic, assign) CGFloat width;
+@end
+
+@protocol HZYFormCellSubViewPlaceholderProtocol <NSObject>
+@property (nonatomic, strong) id placeholder;
 @end
 
 #define HZYFormViewDefaultBackgroundColor [UIColor colorWithRed:235/255.0 green:235/255.0 blue:241/255.0 alpha:1/1.0]

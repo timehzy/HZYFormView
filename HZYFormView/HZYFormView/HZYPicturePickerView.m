@@ -16,6 +16,8 @@
 @end
 
 @implementation HZYPicturePickerView
+//@synthesize values = _values;
+
 @synthesize pictures = _pictures;
 /// 添加一张照片
 - (void)addImage:(UIImage *)image {
@@ -128,19 +130,19 @@
 }
 
 #pragma mark - getter & setter
-- (void)setUrls:(NSMutableArray *)urls{
+- (void)setUrls:(NSArray *)urls{
     _urls = [urls mutableCopy];
-    self.realValues = urls;
+    self.realValues = [urls mutableCopy];
     [self reloadData];
 }
 
-- (void)setPictures:(NSMutableArray *)pictures {
+- (void)setPictures:(NSArray *)pictures {
     _pictures = pictures;
-    self.realValues = pictures;
+    self.realValues = [pictures mutableCopy];
     [self reloadData];
 }
 
-- (NSMutableArray *)pictures{
+- (NSArray *)pictures{
     if (!_pictures) {
         _pictures = [NSMutableArray array];
     }
@@ -154,8 +156,16 @@
     return _realValues;
 }
 
-- (NSArray *)values {
+- (NSArray *)value {
     return self.realValues.copy;
+}
+
+- (void)setValue:(NSArray *)value {
+    if ([value.firstObject isKindOfClass:[UIImage class]]) {
+        self.pictures = value;
+    }else{
+        self.urls = value;
+    }
 }
 
 - (void)setItemSize:(CGSize)itemSize {

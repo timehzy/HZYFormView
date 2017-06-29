@@ -26,14 +26,11 @@
     formView.placeholders = @[@[@"填写姓名"], @[@"选择性别", @"选择爱好（多选）"], @[[UIImage imageNamed:@"lss"]]];
     [formView configCellForRow:0 inSection:1 settings:^(HZYFormViewConfigurator *set) {
         [set options:HZYFormViewCellContentSingleSelector | HZYFormViewCellContentInputField | HZYFormViewCellTitleText];
-    } values:^(HZYFormViewConfigurator *set) {
-        [set value:@[@"男", @"女", @"其他"] forOption:HZYFormViewCellContentMultiSelector];
+        [set selectList:@[@"男", @"女", @"其他"]];
     }];
-
     [formView configCellForRow:1 inSection:1 settings:^(HZYFormViewConfigurator *set) {
         [set options:HZYFormViewCellContentMultiSelector | HZYFormViewCellContentInputField | HZYFormViewCellTitleText];
-    } values:^(HZYFormViewConfigurator *set) {
-        [set value:@[@"吃饭", @"睡觉", @"玩游戏", @"写代码"] forOption:HZYFormViewCellContentMultiSelector];
+        [set selectList:@[@"吃饭", @"睡觉", @"玩游戏", @"写代码"]];
     }];
     [formView configCellForRow:0 inSection:2 settings:^(HZYFormViewConfigurator *set) {
         [set options:HZYFormViewCellContentSinglePhotoPicker | HZYFormViewCellTitleText];

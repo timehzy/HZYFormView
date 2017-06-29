@@ -12,31 +12,33 @@
 
 @interface HZYFormLabel : UILabel<HZYFormCellSubViewProtocol>
 @property (nonatomic, assign) HZYFormViewCellOption type;
+@property (nonatomic, strong) NSString *value;
 + (instancetype)labelWithType:(HZYFormViewCellOption)type;
 @end
 
-@interface HZYFormInputField : UITextField<HZYFormCellSubViewProtocol>
+@interface HZYFormInputField : UITextField<HZYFormCellSubViewProtocol, HZYFormCellSubViewPlaceholderProtocol>
 @property (nonatomic, assign) HZYFormViewCellOption type;
+@property (nonatomic, strong) NSString *value;
 @end
 
 @interface HZYFormButton : UIButton<HZYFormCellSubViewProtocol>
 + (instancetype)buttonWithOption:(HZYFormViewCellOption)type;
 @property (nonatomic, assign) HZYFormViewCellOption type;
 @property (nonatomic, assign) CGFloat width;
-
+@property (nonatomic, strong) id value;
 @end
 
-@interface HZYFormImageView : UIImageView<HZYFormCellSubViewProtocol>
+@interface HZYFormImageView : UIImageView<HZYFormCellSubViewProtocol, HZYFormCellSubViewPlaceholderProtocol>
 @property (nonatomic, assign) HZYFormViewCellOption type;
 @property (nonatomic, assign) CGFloat width;
 @property (nonatomic, strong) UIImage *placeholder;
 @property (nonatomic, copy) NSString *url;
 @property (nonatomic, assign) BOOL didSetImage;
-@property (nonatomic, readonly) id value;
+@property (nonatomic, strong) id value;
 @end
 
-@interface HZYFormInputView : UITextView<HZYFormCellSubViewProtocol>
+@interface HZYFormInputView : UITextView<HZYFormCellSubViewProtocol, HZYFormCellSubViewPlaceholderProtocol>
 @property (nonatomic, assign) HZYFormViewCellOption type;
-@property (nonatomic, copy) NSString *placeholder;
-@property (nonatomic, readonly) NSString *value;
+@property (nonatomic, strong) NSString *placeholder;
+@property (nonatomic, strong) NSString *value;
 @end

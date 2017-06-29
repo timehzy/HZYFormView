@@ -16,6 +16,10 @@
     label.type = type;
     return label;
 }
+
+- (void)setValue:(NSString *)value {
+    self.text = value;
+}
 @end
 
 @implementation HZYFormInputField
@@ -44,6 +48,10 @@
 - (void)setText:(NSString *)text {
     [super setText:text];
     self.layer.borderColor = [UIColor clearColor].CGColor;
+}
+
+- (void)setValue:(NSString *)value {
+    self.text = value;
 }
 @end
 
@@ -114,6 +122,14 @@
         return self.url;
     }
 }
+
+- (void)setValue:(id)value {
+    if ([value isKindOfClass:[UIImage class]]) {
+        self.image = value;
+    }else{
+        self.url = value;
+    }
+}
 @end
 
 @implementation HZYFormInputView{
@@ -180,7 +196,7 @@
 }
 
 - (void)setPlaceholder:(NSString *)placeholder {
-    _placeholder = placeholder;
+    _placeholder = placeholder.copy;
     if (self.text.length == 0) {
         self.text = placeholder;
         self.textColor = [UIColor lightGrayColor];
@@ -194,5 +210,9 @@
     }else{
         return self.text;
     }
+}
+
+- (void)setValue:(NSString *)value {
+    self.text = value;
 }
 @end

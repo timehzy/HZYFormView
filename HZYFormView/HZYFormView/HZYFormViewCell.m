@@ -143,7 +143,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         case HZYFormViewCellContentSinglePhotoPicker:
             return ((HZYFormImageView *)subView).value;
         case HZYFormViewCellContentMultiPhotoPicker:
-            return ((HZYPicturePickerView *)subView).values;
+            return ((HZYPicturePickerView *)subView).value;
         case HZYFormViewCellContentDatePickerDefault:
             return self.startDate;
         case HZYFormViewCellContentDatePickerAtoB:

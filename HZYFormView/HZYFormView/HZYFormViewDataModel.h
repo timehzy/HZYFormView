@@ -17,6 +17,7 @@
 - (HZYFormViewCell *)getCellForRow:(NSUInteger)row inSection:(NSUInteger)section;
 - (void)replaceCell:(HZYFormViewCell *)cell forRow:(NSUInteger)row inSection:(NSUInteger)section;
 - (NSIndexPath *)indexPathOfCell:(HZYFormViewCell *)cell;
+- (void)enumateAllCellsUsingIndexBlock:(void(^)(NSInteger section, NSUInteger row, HZYFormViewCell *cell))indexBlock;
 
 - (void)setSectionRowCount:(NSArray *)array;
 - (NSUInteger)getRowCountInSection:(NSUInteger)section;
@@ -25,14 +26,29 @@
 - (void)setSectionHeaderView:(UIView *)view forSection:(NSUInteger)section;
 - (HZYFormSectionHeaderView *)getSectionHeaderViewForSection:(NSUInteger)section;
 
-@property (nonatomic, copy) NSArray *titles;
-@property (nonatomic, copy) NSArray *icons;
-@property (nonatomic, copy) NSArray *placeholders;
-@property (nonatomic, copy) NSArray *inputTexts;
-@property (nonatomic, copy) NSArray *details;
-@property (nonatomic, copy) NSArray *subDetails;
-@property (nonatomic, copy) NSArray *pictures;
-@property (nonatomic, copy) NSArray *checkmarks;//@0=normal,@1=selected，@2=disable
+- (void)setTitle:(NSString *)title forRow:(NSUInteger)row inSection:(NSUInteger)section;
+- (void)setIcon:(UIImage *)icon forRow:(NSUInteger)row inSection:(NSUInteger)section;
+- (void)setPlaceholder:(id)placeholder forRow:(NSUInteger)row inSection:(NSUInteger)section;
+- (void)setInputText:(NSString *)inputText forRow:(NSUInteger)row inSection:(NSUInteger)section;
+- (void)setDetail:(NSString *)detail forRow:(NSUInteger)row inSection:(NSUInteger)section;
+- (void)setSubDetail:(NSString *)subDetail forRow:(NSUInteger)row inSection:(NSUInteger)section;
+- (void)setPicture:(id)pictures forRow:(NSUInteger)row inSection:(NSUInteger)section;
+- (void)setSelectList:(NSArray *)list forRow:(NSUInteger)row inSection:(NSUInteger)section;
+- (void)setCheckMark:(HZYFormViewCheckmarkState)state forRow:(NSUInteger)row inSection:(NSUInteger)section;
+
+@property (nonatomic, strong) NSMutableArray *titles;
+@property (nonatomic, strong) NSMutableArray *icons;
+@property (nonatomic, strong) NSMutableArray *placeholders;
+@property (nonatomic, strong) NSMutableArray *inputTexts;
+@property (nonatomic, strong) NSMutableArray *details;
+@property (nonatomic, strong) NSMutableArray *subDetails;
+@property (nonatomic, strong) NSMutableArray *pictures;
+@property (nonatomic, strong) NSMutableArray *selectLists;
+@property (nonatomic, strong) NSMutableArray *checkmarks;//@0=normal,@1=selected，@2=disabled
+
+- (void)setupAllCellValue;
+- (void)setupCellValueForRow:(NSUInteger)row inSection:(NSUInteger)section;
+
 
 @property (nonatomic, strong) UIFont *titleFont;
 @property (nonatomic, strong) UIColor *titleColor;

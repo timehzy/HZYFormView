@@ -9,10 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "HZYFormViewDefine.h"
 
+@class HZYFormViewDataModel;
 @class HZYFormViewCell;
-
 @interface HZYFormViewConfigurator : NSObject
-- (instancetype)initWithCell:(HZYFormViewCell *)cell;
+- (instancetype)initWithDataModel:(HZYFormViewDataModel *)dataModel forRow:(NSUInteger)row inSection:(NSUInteger)section;
 - (HZYFormViewCell *)configedCell;
 
 /// indexPath传nil可以设置全部高度，indexpath.row传-1可以设置section每个cell的高度
@@ -23,9 +23,16 @@
 - (void)keyboardType:(UIKeyboardType)type;
 - (void)inputFieldAlignment:(NSTextAlignment)alignment;
 - (void)selectorRelatedView:(HZYFormViewCellOption)viewOption;
-
-- (void)value:(id)value forOption:(HZYFormViewCellOption)option;
-- (void)placeholder:(id)placeholder forOption:(HZYFormViewCellOption)option;
+- (void)title:(NSString *)title;
+- (void)icon:(UIImage *)icon;
+- (void)placeholder:(id)placeholder;
+- (void)inputText:(NSString *)text;
+- (void)detail:(NSString *)detail;
+- (void)subDetail:(NSString *)subDetail;
+- (void)picture:(UIImage *)picture;
+- (void)pictures:(NSArray *)pictures;
+- (void)selectList:(NSArray *)selectList;
+- (void)checkmark:(HZYFormViewCheckmarkState)state;
 
 /// 设置section headerView。section传nil可以统一设置所有section
 - (void)headerHeight:(CGFloat)height;
