@@ -14,5 +14,5 @@
 @interface HZYFormVIewCellSubViewCreater : NSObject
 - (instancetype)initWithDataModel:(HZYFormViewDataModel *)dataModel;
 
-- (HZYFormViewCell *)createCellSubviews:(HZYFormViewCell *)cell accessory:(NSDictionary *)accessory;
+- (void)createCellSubviews:(HZYFormViewCell *)cell accessory:(NSDictionary *)accessory;
 @end

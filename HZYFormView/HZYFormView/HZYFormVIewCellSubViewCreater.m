@@ -26,7 +26,7 @@
 }
 
 #pragma mark - Private Method
-- (HZYFormViewCell *)createCellSubviews:(HZYFormViewCell *)cell accessory:(NSDictionary *)accessory {
+- (void)createCellSubviews:(HZYFormViewCell *)cell accessory:(NSDictionary *)accessory {
     HZYFormViewCellOption options = cell.options;
     if (cell.subviews.count > 0) {
         [cell.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
@@ -106,7 +106,6 @@
     }
     
     [cell layoutFormViews];
-    return cell;
 }
 
 

@@ -35,7 +35,8 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     HZYFormViewConfigurator *setter = [[HZYFormViewConfigurator alloc] initWithDataModel:self.dataModel forRow:row inSection:section];
     if (setting) {
         setting(setter);
-        HZYFormViewCell *cell = [self.cellSubviewCreater createCellSubviews:[setter configedCell] accessory:nil];
+        HZYFormViewCell *cell = [setter configedCell];
+        [self.cellSubviewCreater createCellSubviews:cell accessory:nil];
         [self.dataModel replaceCell:cell forRow:row inSection:section];
         [self.dataModel setupCellValueForRow:row inSection:section];
         [self reLayout:NO];
@@ -286,35 +287,10 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     view.frame = frame;
 }
 
-- (void)changeFrameWithOptions:(HZYFormViewCellOption)option forRow:(NSUInteger)row inSection:(NSUInteger)section {
-    HZYFormViewCell *cell = [self.dataModel getCellForRow:row inSection:section];
-    cell.options = option;
-    CGRect frame = cell.frame;
-    if (option & HZYFormViewCellContentSinglePhotoPicker) {
-        frame.size.height = 166;
-    }else if (option & HZYFormViewCellContentInputView) {
-        frame.size.height = 120;
-    }else if (option & HZYFormViewCellContentMultiPhotoPicker) {
-        if (self.dataModel.pictures &&
-            self.dataModel.pictures.count > section &&
-            [self.dataModel.pictures[section] count] > row &&
-            [self.dataModel.pictures[section][row] isKindOfClass:[NSArray class]] &&
-            [self.dataModel.pictures[section][row] count] > 3) {
-            frame.size.height = [self multiPhotoPickerHeightForNumberOfLine:2];
-        }else{
-            frame.size.height = [self multiPhotoPickerHeightForNumberOfLine:1];
-        }
-    }
-    cell.frame = frame;
-    cell = [self.cellSubviewCreater createCellSubviews:cell accessory:nil];
-    [self reLayout:YES];
-}
-
 - (CGFloat)multiPhotoPickerHeightForNumberOfLine:(NSUInteger)lineNum {
     CGFloat itemWH = ([UIScreen mainScreen].bounds.size.width - 16*2 -3*8) / 4;
     return itemWH*lineNum + 12 + lineNum * 8 + 4 + 28;
 }
-
 
 - (HZYFormViewCell *)createCell:(CGFloat)cellY cellHeight:(CGFloat)cellHeight forRow:(NSUInteger)row inSection:(NSUInteger)section{
     HZYFormViewCell *view = [[HZYFormViewCell alloc]initWithFrame:CGRectMake(0, cellY, self.bounds.size.width, cellHeight)];
@@ -382,15 +358,6 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
 
 - (void)isIndexPathOutofBounds:(NSIndexPath *)indexPath {
     NSAssert([self.dataModel getSectionCount] > indexPath.section && [self.dataModel getRowCountInSection:indexPath.section] > indexPath.row, @"row or section index is out of bounds");
-}
-
-- (HZYFormInputView *)getInputView:(NSIndexPath *)indexPath {
-    HZYFormInputView *inputView = (HZYFormInputView *)[[self cellAtIndexPath:indexPath]subViewForType:HZYFormViewCellContentInputView];
-    if (!inputView) {
-        inputView = (HZYFormInputView *)[[self cellAtIndexPath:indexPath]subViewForType:HZYFormViewCellContentInputField];
-    }
-    NSAssert(inputView, @"no inputView or inputField in cell");
-    return inputView;
 }
 
 - (void)autoNextBecomeFirstResponder:(HZYFormViewCell *)view {
@@ -465,7 +432,6 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
 }
 
 #pragma mark - setter
-
 - (void)setHeaderView:(UIView *)headerView {
     _headerView = headerView;
     CGRect rect = headerView.frame;
