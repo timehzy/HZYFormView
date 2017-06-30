@@ -26,7 +26,6 @@
 @property (nonatomic, strong) UIView *headerView;
 @property (nonatomic, strong) UIView *footerView;
 
-#pragma mark - conifg cell | section
 /// 单独配置一个cell的样式和值
 - (void)configCellForRow:(NSUInteger)row inSection:(NSUInteger)section settings:(void(^)(HZYFormViewCellConfigurator *set))setting;
 /// 单独配置一个section header的样式和值

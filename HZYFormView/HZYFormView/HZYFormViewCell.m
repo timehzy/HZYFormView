@@ -94,6 +94,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         case HZYFormViewCellContentSinglePhotoPicker:
             if ([value isKindOfClass:[UIImage class]]) {
                 ((HZYFormImageView *)subView).image = value;
+                ((HZYFormImageView *)subView).didSetImage = YES;
             } else {
                 ((HZYFormImageView *)subView).url = value;
             }
@@ -346,6 +347,7 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
         }
         make.leading.equalTo(self).offset(16);
         make.width.equalTo(@164.5);
+        make.height.equalTo(@110);
         make.bottom.equalTo(self).offset(-12);
     }];
 }
@@ -453,6 +455,10 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
                 [[self viewController] presentViewController:vc animated:YES completion:nil];
             }else{
                 ((HZYFormImageView *)[self subViewForType:HZYFormViewCellContentSinglePhotoPicker]).image = nil;
+                [[NSNotificationCenter defaultCenter]postNotificationName:HZYFormCellImageDidDeletedNotification
+                                                                   object:self
+                                                                 userInfo:@{HZYFormCellDeletedImageIndexKey : [NSNumber numberWithInteger:0],
+                                                                            HZYFormCellDeletedImageRemainCountKey : [NSNumber numberWithInteger:0]}];
             }
         }];
     }

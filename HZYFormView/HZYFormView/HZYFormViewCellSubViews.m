@@ -106,11 +106,12 @@
 
 - (void)setUrl:(NSString *)url {
     if (!url) {
-        _url = nil;
         return;
     }
     _url = url;
-    [self sd_setImageWithURL:[NSURL URLWithString:url]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self sd_setImageWithURL:[NSURL URLWithString:url]];
+    });
 }
 
 - (id)value {
