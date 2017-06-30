@@ -45,15 +45,11 @@
 }
 
 - (void)inputEnable:(BOOL)enable {
-    [self getInputView].userInteractionEnabled = enable;
+    self.dataModel.inputUserInteractionEnableArray[self.section][self.row] = @(enable);
 }
 
 - (void)keyboardType:(UIKeyboardType)type {
-    [self getInputView].keyboardType = type;
-}
-
-- (void)inputFieldAlignment:(NSTextAlignment)alignment {
-    [self getInputView].textAlignment = alignment;
+    self.dataModel.inputKeyboardTypeArray[self.section][self.row] = @(type);
 }
 
 - (void)selectorRelatedView:(HZYFormViewCellOption)viewOption {
@@ -61,43 +57,43 @@
 }
 
 - (void)title:(NSString *)title {
-    [self.dataModel setTitle:title forRow:self.row inSection:self.section];
+    self.dataModel.titles[self.section][self.row] = title;
 }
 
 - (void)icon:(UIImage *)icon {
-    [self.dataModel setIcon:icon forRow:self.row inSection:self.section];
+    self.dataModel.icons[self.section][self.row] = icon;
 }
 
 - (void)placeholder:(id)placeholder {
-    [self.dataModel setPlaceholder:placeholder forRow:self.row inSection:self.section];
+    self.dataModel.placeholders[self.section][self.row] = placeholder;
 }
 
 - (void)inputText:(NSString *)text {
-    [self.dataModel setInputText:text forRow:self.row inSection:self.section];
+    self.dataModel.inputTexts[self.section][self.row] = text;
 }
 
 - (void)detail:(NSString *)detail {
-    [self.dataModel setDetail:detail forRow:self.row inSection:self.section];
+    self.dataModel.details[self.section][self.row] = detail;
 }
 
 - (void)subDetail:(NSString *)subDetail {
-    [self.dataModel setSubDetail:subDetail forRow:self.row inSection:self.section];
+    self.dataModel.subDetails[self.section][self.row] = subDetail;
 }
 
 - (void)picture:(UIImage *)picture {
-    [self.dataModel setPicture:picture forRow:self.row inSection:self.section];
+    self.dataModel.pictures[self.section][self.row] = picture;
 }
 
 - (void)pictures:(NSArray *)pictures {
-    [self.dataModel setPicture:pictures forRow:self.row inSection:self.section];
+    self.dataModel.pictures[self.section][self.row] = pictures;
 }
 
 - (void)selectList:(NSArray *)selectList {
-    [self.dataModel setSelectList:selectList forRow:self.row inSection:self.section];
+    self.dataModel.selectLists[self.section][self.row] = selectList;
 }
 
 - (void)checkmark:(HZYFormViewCheckmarkState)state {
-    [self.dataModel setCheckMark:state forRow:self.row inSection:self.section];
+    self.dataModel.checkmarks[self.section][self.row] = @(state);
 }
 
 #pragma mark - private

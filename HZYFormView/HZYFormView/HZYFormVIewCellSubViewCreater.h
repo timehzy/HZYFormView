@@ -7,12 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "HZYFormViewDefine.h"
 
-@class HZYFormViewCell;
 @class HZYFormViewDataModel;
 @interface HZYFormVIewCellSubViewCreater : NSObject
 - (instancetype)initWithDataModel:(HZYFormViewDataModel *)dataModel;
 
-- (void)createCellSubviews:(HZYFormViewCell *)cell accessory:(NSDictionary *)accessory;
+- (void)createCellSubviewsForRow:(NSUInteger)row inSection:(NSUInteger)section accessory:(NSDictionary *)accessory;
 @end

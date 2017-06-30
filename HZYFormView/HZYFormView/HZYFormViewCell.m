@@ -479,7 +479,6 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
             [self setTextForLabelOrInputView:str];
         }else{
             NSMutableString *str = [NSMutableString string];
-//            select.selectedRow = 
             for (NSNumber *index in indexList) {
                 [str appendString:self.selectList[index.integerValue]];
                 [str appendString:@" "];
@@ -585,5 +584,28 @@ NSNotificationName const HZYFormCellImageDidDeletedNotification = @"HZYFormCellI
     self.frame = frame;
 }
 
+- (void)setInputKeyboardType:(UIKeyboardType)inputKeyboardType {
+    if (self.options & HZYFormViewCellContentInputField) {
+        ((HZYFormInputField *)[self subViewForType:HZYFormViewCellContentInputField]).keyboardType = inputKeyboardType;
+    }else if (self.options & HZYFormViewCellContentInputView) {
+        ((HZYFormInputView *)[self subViewForType:HZYFormViewCellContentInputView]).keyboardType = inputKeyboardType;
+    }
+}
+
+- (void)setInputUserInteractionEnable:(BOOL)inputUserInteractionEnable {
+    if (self.options & HZYFormViewCellContentInputField) {
+        ((HZYFormInputField *)[self subViewForType:HZYFormViewCellContentInputField]).userInteractionEnabled = inputUserInteractionEnable;
+    }else if (self.options & HZYFormViewCellContentInputView) {
+        ((HZYFormInputView *)[self subViewForType:HZYFormViewCellContentInputView]).userInteractionEnabled = inputUserInteractionEnable;
+    }
+}
+
+- (void)setInputTextAlignment:(NSTextAlignment)inputTextAlignment {
+    if (self.options & HZYFormViewCellContentInputField) {
+        ((HZYFormInputField *)[self subViewForType:HZYFormViewCellContentInputField]).textAlignment = inputTextAlignment;
+    }else if (self.options & HZYFormViewCellContentInputView) {
+        ((HZYFormInputView *)[self subViewForType:HZYFormViewCellContentInputView]).textAlignment = inputTextAlignment;
+    }
+}
 @end
 

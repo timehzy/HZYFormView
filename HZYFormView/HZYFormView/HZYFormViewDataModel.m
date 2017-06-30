@@ -34,7 +34,7 @@
 @synthesize cellBackgroundColor = _cellBackgroundColor;
 @synthesize cellSeperatorColor = _cellSeperatorColor;
 @synthesize cellSeperatorInsets = _cellSeperatorInsets;
-@synthesize textAlignment = _textAlignment;
+@synthesize inputTextAlignment = _inputTextAlignment;
 @synthesize titles = _titles;
 @synthesize icons = _icons;
 @synthesize placeholders = _placeholders;
@@ -44,9 +44,12 @@
 @synthesize pictures = _pictures;
 @synthesize selectLists = _selectLists;
 @synthesize checkmarks = _checkmarks;
+@synthesize inputKeyboardTypeArray = _inputKeyboardTypeArray;
+@synthesize inputUserInteractionEnableArray = _inputUserInteractionEnableArray;
+
 - (instancetype)init {
     if (self = [super init]) {
-        _textAlignment = NSTextAlignmentRight;
+        _inputTextAlignment = NSTextAlignmentRight;
         _cellSeperatorInsets = HZYFormViewCellSeperatorInsets;
     }
     return self;
@@ -361,64 +364,55 @@
     return _checkmarks;
 }
 
-- (void)setTitle:(NSString *)title forRow:(NSUInteger)row inSection:(NSUInteger)section {
-    self.titles[section][row] = title;
+- (NSMutableArray *)inputUserInteractionEnableArray {
+    if (!_inputUserInteractionEnableArray) {
+        _inputUserInteractionEnableArray = [self createArray];
+        for (NSInteger i=0; i<[self getSectionCount]; i++) {
+            for (NSInteger j=0; j<[self getRowCountInSection:i]; j++) {
+                _inputUserInteractionEnableArray[i][j] = @(YES);
+            }
+        }
+    }
+    return _inputUserInteractionEnableArray;
 }
 
-- (void)setIcon:(UIImage *)icon forRow:(NSUInteger)row inSection:(NSUInteger)section {
-    self.icons[section][row] = icon;
-}
-
-- (void)setPlaceholder:(id)placeholder forRow:(NSUInteger)row inSection:(NSUInteger)section {
-    self.placeholders[section][row] = placeholder;
-}
-
-- (void)setInputText:(NSString *)inputText forRow:(NSUInteger)row inSection:(NSUInteger)section {
-    self.inputTexts[section][row] = inputText;
-}
-
-- (void)setDetail:(NSString *)detail forRow:(NSUInteger)row inSection:(NSUInteger)section {
-    self.details[section][row] = detail;
-}
-
-- (void)setSubDetail:(NSString *)subDetail forRow:(NSUInteger)row inSection:(NSUInteger)section {
-    self.subDetails[section][row] = subDetail;
-}
-
-- (void)setPicture:(id)pictures forRow:(NSUInteger)row inSection:(NSUInteger)section {
-    self.pictures[section][row] = pictures;
-}
-
-- (void)setSelectList:(NSArray *)list forRow:(NSUInteger)row inSection:(NSUInteger)section {
-    self.selectLists[section][row] = list;
-}
-
-- (void)setCheckMark:(HZYFormViewCheckmarkState)state forRow:(NSUInteger)row inSection:(NSUInteger)section {
-    self.checkmarks[section][row] = @(state);
+- (NSMutableArray *)inputKeyboardTypeArray {
+    if (!_inputKeyboardTypeArray) {
+        _inputKeyboardTypeArray = [self createArray];
+        for (NSInteger i=0; i<[self getSectionCount]; i++) {
+            for (NSInteger j=0; j<[self getRowCountInSection:i]; j++) {
+                _inputKeyboardTypeArray[i][j] = @(UIKeyboardTypeDefault);
+            }
+        }
+    }
+    return _inputKeyboardTypeArray;
 }
 
 - (void)setTitles:(NSMutableArray *)titles {
-    _titles = titles;
-    for (NSInteger i=0; i<_titles.count; i++) {
-        for (NSInteger j=0; j<[_titles[i] count]; j++) {
+    _titles = [self createArray];
+    for (NSInteger i=0; i<titles.count; i++) {
+        for (NSInteger j=0; j<[titles[i] count]; j++) {
+            _titles[i][j] = titles[i][j];
             [self setupCellValueOfType:HZYFormViewCellTitleText forRow:j inSection:i];
         }
     }
 }
 
 - (void)setIcons:(NSMutableArray *)icons {
-    _icons = icons;
+    _icons = [self createArray];
     for (NSInteger i=0; i<icons.count; i++) {
         for (NSInteger j=0; j<[icons[i] count]; j++) {
+            _icons[i][j] = icons[i][j];
             [self setupCellValueOfType:HZYFormViewCellTitleIcon forRow:j inSection:i];
         }
     }
 }
 
 - (void)setPlaceholders:(NSMutableArray *)placeholders {
-    _placeholders = placeholders;
+    _placeholders = [self createArray];
     for (NSInteger i=0; i<placeholders.count; i++) {
         for (NSInteger j=0; j<[placeholders[i] count]; j++) {
+            _placeholders[i][j] = placeholders[i][j];
             if ([placeholders[i][j] isKindOfClass:[UIImage class]]) {
                 [self setupCellPlaceholder:HZYFormViewCellContentSinglePhotoPicker forRow:j inSection:i];
             }else if ([placeholders[i][j] isKindOfClass:[NSArray class]] && [[placeholders[i][j] firstObject] isKindOfClass:[UIImage class]]) {
@@ -432,9 +426,10 @@
 }
 
 - (void)setInputTexts:(NSMutableArray *)inputTexts {
-    _inputTexts = inputTexts;
+    _inputTexts = [self createArray];
     for (NSInteger i=0; i<inputTexts.count; i++) {
         for (NSInteger j=0; j<[inputTexts[i] count]; j++) {
+            _inputTexts[i][j] = inputTexts[i][j];
             [self setupCellValueOfType:HZYFormViewCellContentInputField forRow:j inSection:i];
             [self setupCellValueOfType:HZYFormViewCellContentInputView forRow:j inSection:i];
         }
@@ -442,27 +437,30 @@
 }
 
 - (void)setDetails:(NSMutableArray *)details {
-    _details = details;
+    _details = [self createArray];
     for (NSInteger i=0; i<details.count; i++) {
         for (NSInteger j=0; j<[details[i] count]; j++) {
+            _details[i][j] = details[i][j];
             [self setupCellValueOfType:HZYFormViewCellContentDetail forRow:j inSection:i];
         }
     }
 }
 
 - (void)setSubDetails:(NSMutableArray *)subDetails {
-    _subDetails = subDetails;
+    _subDetails = [self createArray];
     for (NSInteger i=0; i<subDetails.count; i++) {
         for (NSInteger j=0; j<[subDetails[i] count]; j++) {
+            _subDetails[i][j] = subDetails[i][j];
             [self setupCellValueOfType:HZYFormViewCellContentSubDetail forRow:j inSection:i];
         }
     }
 }
 
 - (void)setPictures:(NSMutableArray *)pictures {
-    _pictures = pictures;
+    _pictures = [self createArray];
     for (NSInteger i=0; i<pictures.count; i++) {
         for (NSInteger j=0; j<[pictures[i] count]; j++) {
+            _pictures[i][j] = pictures[i][j];
             if ([pictures[i][j] isKindOfClass:[UIImage class]]) {
                 [self setupCellValueOfType:HZYFormViewCellContentSinglePhotoPicker forRow:j inSection:i];
             }else{
@@ -473,9 +471,10 @@
 }
 
 - (void)setSelectLists:(NSMutableArray *)selectLists {
-    _selectLists = selectLists;
+    _selectLists = [self createArray];
     for (NSInteger i=0; i<selectLists.count; i++) {
         for (NSInteger j=0; j<[selectLists[i] count]; j++) {
+            _selectLists[i][j] = selectLists[i][j];
             [self setupCellValueOfType:HZYFormViewCellContentSingleSelector forRow:j inSection:i];
             [self setupCellValueOfType:HZYFormViewCellContentMultiSelector forRow:j inSection:i];
         }
@@ -483,10 +482,32 @@
 }
 
 - (void)setCheckmarks:(NSMutableArray *)checkmarks {
-    _checkmarks = checkmarks;
+    _checkmarks = [self createArray];
     for (NSInteger i=0; i<checkmarks.count; i++) {
         for (NSInteger j=0; j<[checkmarks[i] count]; j++) {
+            _checkmarks[i][j] = checkmarks[i][j];
             [self setupCellValueOfType:HZYFormViewCellContentCheckMark forRow:j inSection:i];
+
+        }
+    }
+}
+
+- (void)setInputUserInteractionEnableArray:(NSMutableArray *)inputUserInteractionEnableArray {
+    for (NSInteger i=0; i<inputUserInteractionEnableArray.count; i++) {
+        for (NSInteger j=0; j<[inputUserInteractionEnableArray[i] count]; j++) {
+            _inputUserInteractionEnableArray[i][j] = inputUserInteractionEnableArray[i][j];
+            [self getCellForRow:j inSection:i].inputUserInteractionEnable = [inputUserInteractionEnableArray[i][j] boolValue];
+            
+        }
+    }
+}
+
+- (void)setInputKeyboardTypeArray:(NSMutableArray *)inputKeyboardTypeArray {
+    for (NSInteger i=0; i<inputKeyboardTypeArray.count; i++) {
+        for (NSInteger j=0; j<[inputKeyboardTypeArray[i] count]; j++) {
+            _inputKeyboardTypeArray[i][j] = inputKeyboardTypeArray[i][j];
+            [self getCellForRow:j inSection:i].inputKeyboardType = [inputKeyboardTypeArray[i][j] integerValue];
+            
         }
     }
 }
@@ -576,8 +597,11 @@
     return _cellSeperatorColor;
 }
 
-- (void)setTextAlignment:(NSTextAlignment)textAlignment {
-    _textAlignment = textAlignment;
+- (void)setInputTextAlignment:(NSTextAlignment)inputTextAlignment {
+    _inputTextAlignment = inputTextAlignment;
+    [self enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
+        cell.inputTextAlignment = inputTextAlignment;
+    }];
 }
 
 - (void)setCellBackgroundColor:(UIColor *)color {

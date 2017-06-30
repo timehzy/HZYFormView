@@ -26,7 +26,8 @@
 }
 
 #pragma mark - Private Method
-- (void)createCellSubviews:(HZYFormViewCell *)cell accessory:(NSDictionary *)accessory {
+- (void)createCellSubviewsForRow:(NSUInteger)row inSection:(NSUInteger)section accessory:(NSDictionary *)accessory {
+    HZYFormViewCell *cell = [self.dataModel getCellForRow:row inSection:section];
     HZYFormViewCellOption options = cell.options;
     if (cell.subviews.count > 0) {
         [cell.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
@@ -94,7 +95,9 @@
     }
     if (options & HZYFormViewCellContentInputField) {
         HZYFormInputField *inputField = [self createInputField];
-        inputField.textAlignment = self.dataModel.textAlignment;
+        inputField.textAlignment = self.dataModel.inputTextAlignment;
+        inputField.userInteractionEnabled = [self.dataModel.inputUserInteractionEnableArray[section][row] boolValue];
+        inputField.keyboardType = [self.dataModel.inputKeyboardTypeArray[section][row] integerValue];
         [cell addSubview:inputField];
     }
     if (options & HZYFormViewCellContentInputView) {
@@ -102,6 +105,8 @@
         inputView.textColor = self.dataModel.inputViewTextColor;
         inputView.font = self.dataModel.inputViewFont;
         inputView.type = HZYFormViewCellContentInputView;
+        inputView.userInteractionEnabled = [self.dataModel.inputUserInteractionEnableArray[section][row] boolValue];
+        inputView.keyboardType = [self.dataModel.inputKeyboardTypeArray[section][row] integerValue];
         [cell addSubview:inputView];
     }
     

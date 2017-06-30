@@ -21,7 +21,6 @@
 - (void)options:(HZYFormViewCellOption)options;
 - (void)inputEnable:(BOOL)enable;
 - (void)keyboardType:(UIKeyboardType)type;
-- (void)inputFieldAlignment:(NSTextAlignment)alignment;
 - (void)selectorRelatedView:(HZYFormViewCellOption)viewOption;
 - (void)title:(NSString *)title;
 - (void)icon:(UIImage *)icon;
@@ -33,5 +32,4 @@
 - (void)pictures:(NSArray *)pictures;
 - (void)selectList:(NSArray *)selectList;
 - (void)checkmark:(HZYFormViewCheckmarkState)state;
-
 @end

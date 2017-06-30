@@ -34,11 +34,14 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
 
 - (void)configCellForRow:(NSUInteger)row inSection:(NSUInteger)section settings:(void (^)(HZYFormViewCellConfigurator *))setting {
     HZYFormViewCellConfigurator *setter = [[HZYFormViewCellConfigurator alloc] initWithDataModel:self.dataModel forRow:row inSection:section];
+    HZYFormViewCellOption originOption = [self.dataModel getCellForRow:row inSection:section].options;
     if (setting) {
         setting(setter);
         HZYFormViewCell *cell = [setter configedCell];
-        [self.cellSubviewCreater createCellSubviews:cell accessory:nil];
         [self.dataModel replaceCell:cell forRow:row inSection:section];
+        if (originOption != cell.options) {
+            [self.cellSubviewCreater createCellSubviewsForRow:row inSection:section accessory:nil];
+        }
         [self.dataModel setupCellValueForRow:row inSection:section];
         [self reLayout:NO];
     }
@@ -94,68 +97,6 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     [self reLayout:animate];
 }
 
-- (id)getValueFromCellOptions:(HZYFormViewCellOption)options atIndex:(NSIndexPath *)indexPath {
-    [self isIndexPathOutofBounds:indexPath];
-    HZYFormViewCell *cell = [self cellAtIndexPath:indexPath];
-    return [cell getContentValueForOptions:options];
-}
-
-- (NSArray *)getAllValues {
-    NSMutableArray *tempArray = [NSMutableArray array];
-    [self.dataModel enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
-        if (row == 0) {
-            [tempArray addObject:[NSMutableArray array]];
-        }
-        [tempArray[section] addObject:[cell getContentValueForOptions:HZYFormViewCellContentInputField]];
-        if ([tempArray[section][row] isEqual:[NSNull null]]) {
-            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentInputView];
-        }
-        if ([tempArray[section][row] isEqual:[NSNull null]]) {
-            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentSinglePhotoPicker];
-        }
-        if ([tempArray[section][row] isEqual:[NSNull null]]) {
-            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentMultiPhotoPicker];
-        }
-    }];
-    return tempArray.copy;
-}
-
-
-- (NSArray<NSIndexPath *> *)checkIsEmpty:(NSArray<NSIndexPath *> *)indexPaths {
-    NSMutableArray *tempArr = [NSMutableArray array];
-    if (!indexPaths) {
-        [self.dataModel enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
-            NSString *value = [self getValueFromCellOptions:HZYFormViewCellContentInputField | HZYFormViewCellContentInputView atIndex:[NSIndexPath indexPathForRow:row inSection:section]];
-            if (([cell subViewForType:HZYFormViewCellContentInputField] || [cell subViewForType:HZYFormViewCellContentInputView]) &&
-                (!value || [value isEqualToString:@""])) {
-                [tempArr addObject:[NSIndexPath indexPathForRow:row inSection:section]];
-            }
-        }];
-    }else{        
-        for (NSIndexPath *path in indexPaths) {
-            [self isIndexPathOutofBounds:path];
-            HZYFormViewCell *cell = [self.dataModel getCellForRow:path.row inSection:path.section];
-            NSString *value = [self getValueFromCellOptions:HZYFormViewCellContentInputField | HZYFormViewCellContentInputView atIndex:path];
-            if (([cell subViewForType:HZYFormViewCellContentInputField] || [cell subViewForType:HZYFormViewCellContentInputView]) &&
-                (!value || [value isEqualToString:@""])) {
-                    [tempArr addObject:path];
-                }
-        }
-    }
-    return tempArr.copy;
-}
-
-- (void)setCellInputEmptyAlert:(NSArray<NSIndexPath *> *)rows {
-    for (NSIndexPath *indexPath in rows) {
-        HZYFormViewCell *cell = [self.dataModel getCellForRow:indexPath.row inSection:indexPath.section];
-        if ([cell subViewForType:HZYFormViewCellContentInputField]) {
-            ((HZYFormInputField *)[cell subViewForType:HZYFormViewCellContentInputField]).layer.borderColor = HZYFormViewCellAlertBorderColor.CGColor;
-        }else if ([cell subViewForType:HZYFormViewCellContentInputView]) {
-            ((HZYFormInputView *)[cell subViewForType:HZYFormViewCellContentInputView]).layer.borderColor = HZYFormViewCellAlertBorderColor.CGColor;
-        }
-    }
-}
-
 #pragma mark - init & lifeCycle
 - (instancetype)initWithFrame:(CGRect)frame rowsCount:(NSInteger)numberOfRow sectionRows:(NSArray<NSNumber *> *)sectionRows{
     if (self = [super initWithFrame:frame]) {
@@ -200,8 +141,8 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
         lastCellMaxY += HZYFormViewSectionHeaderHeight;
         //添加cell
         for (NSInteger j=0; j<[self.dataModel getRowCountInSection:i]; j++) {
-            HZYFormViewCell *cell = [self createCell:lastCellMaxY cellHeight:HZYFormViewCellHeight forRow:j inSection:i];
-            [self.cellSubviewCreater createCellSubviews:cell accessory:nil];
+            [self createCell:lastCellMaxY cellHeight:HZYFormViewCellHeight forRow:j inSection:i];
+            [self.cellSubviewCreater createCellSubviewsForRow:j inSection:i accessory:nil];
             lastCellMaxY += HZYFormViewCellHeight;
         }
     }
@@ -377,40 +318,158 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     _footerView.frame = rect;
 }
 
+
+@end
+
+@implementation HZYFormView (HZYFormViewValue)
+- (id)getValueFromCellOptions:(HZYFormViewCellOption)options atIndex:(NSIndexPath *)indexPath {
+    [self isIndexPathOutofBounds:indexPath];
+    HZYFormViewCell *cell = [self cellAtIndexPath:indexPath];
+    return [cell getContentValueForOptions:options];
+}
+
+- (NSArray *)getAllValues {
+    NSMutableArray *tempArray = [NSMutableArray array];
+    [self.dataModel enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
+        if (row == 0) {
+            [tempArray addObject:[NSMutableArray array]];
+        }
+        [tempArray[section] addObject:[cell getContentValueForOptions:HZYFormViewCellContentInputField]];
+        if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentInputView];
+        }else if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentSinglePhotoPicker];
+        }else if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentMultiPhotoPicker];
+        }else if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentSingleSelector];
+        }else if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentMultiSelector];
+        }else if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentDatePickerDefault];
+        }else if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentDatePickerAtoB];
+        }else if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentCitySelector];
+        }else if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentDetail];
+        }else if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentSubDetail];
+        }else if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellContentCheckMark];
+        }else if ([tempArray[section][row] isEqual:[NSNull null]]) {
+            tempArray[section][row] = [cell getContentValueForOptions:HZYFormViewCellTitleText];
+        }
+    }];
+    return tempArray.copy;
+}
+
+
+- (NSArray<NSIndexPath *> *)checkIsEmpty:(NSArray<NSIndexPath *> *)indexPaths {
+    NSMutableArray *tempArr = [NSMutableArray array];
+    if (!indexPaths) {
+        [self.dataModel enumateAllCellsUsingIndexBlock:^(NSInteger section, NSUInteger row, HZYFormViewCell *cell) {
+            NSString *value = [self getValueFromCellOptions:HZYFormViewCellContentInputField | HZYFormViewCellContentInputView atIndex:[NSIndexPath indexPathForRow:row inSection:section]];
+            if (([cell subViewForType:HZYFormViewCellContentInputField] || [cell subViewForType:HZYFormViewCellContentInputView]) &&
+                (!value || [value isEqualToString:@""])) {
+                [tempArr addObject:[NSIndexPath indexPathForRow:row inSection:section]];
+            }
+        }];
+    }else{
+        for (NSIndexPath *path in indexPaths) {
+            [self isIndexPathOutofBounds:path];
+            HZYFormViewCell *cell = [self.dataModel getCellForRow:path.row inSection:path.section];
+            NSString *value = [self getValueFromCellOptions:HZYFormViewCellContentInputField | HZYFormViewCellContentInputView atIndex:path];
+            if (([cell subViewForType:HZYFormViewCellContentInputField] || [cell subViewForType:HZYFormViewCellContentInputView]) &&
+                (!value || [value isEqualToString:@""])) {
+                [tempArr addObject:path];
+            }
+        }
+    }
+    return tempArr.copy;
+}
+
+- (void)setCellInputEmptyAlert:(NSArray<NSIndexPath *> *)rows {
+    for (NSIndexPath *indexPath in rows) {
+        HZYFormViewCell *cell = [self.dataModel getCellForRow:indexPath.row inSection:indexPath.section];
+        if ([cell subViewForType:HZYFormViewCellContentInputField]) {
+            ((HZYFormInputField *)[cell subViewForType:HZYFormViewCellContentInputField]).layer.borderColor = HZYFormViewCellAlertBorderColor.CGColor;
+        }else if ([cell subViewForType:HZYFormViewCellContentInputView]) {
+            ((HZYFormInputView *)[cell subViewForType:HZYFormViewCellContentInputView]).layer.borderColor = HZYFormViewCellAlertBorderColor.CGColor;
+        }
+    }
+}
+
 - (void)setTitles:(NSArray *)titles {
     self.dataModel.titles = titles.mutableCopy;
+}
+
+- (NSArray *)titles {
+    return self.dataModel.titles;
 }
 
 - (void)setIcons:(NSArray *)icons {
     self.dataModel.icons = icons.mutableCopy;
 }
 
+- (NSArray *)icons {
+    return self.dataModel.icons;
+}
+
 - (void)setPlaceholders:(NSArray *)placeholders {
     self.dataModel.placeholders = placeholders.mutableCopy;
+}
+
+- (NSArray *)placeholders {
+    return self.dataModel.placeholders;
 }
 
 - (void)setInputTexts:(NSArray *)inputTexts {
     self.dataModel.inputTexts = inputTexts.mutableCopy;
 }
 
+- (NSArray *)inputTexts {
+    return self.dataModel.inputTexts;
+}
+
 - (void)setDetails:(NSArray *)details {
     self.dataModel.details = details.mutableCopy;
+}
+
+- (NSArray *)details {
+    return self.dataModel.details;
 }
 
 - (void)setSubDetails:(NSArray *)subDetails {
     self.dataModel.subDetails = subDetails.mutableCopy;
 }
 
+- (NSArray *)subDetails {
+    return self.dataModel.subDetails;
+}
+
 - (void)setPictures:(NSArray *)pictures {
     self.dataModel.pictures = pictures.mutableCopy;
+}
+
+- (NSArray *)pictures {
+    return self.dataModel.pictures;
 }
 
 - (void)setCheckmarks:(NSArray *)checkmarks {
     self.dataModel.checkmarks = checkmarks.mutableCopy;
 }
+
+- (NSArray *)checkmarks {
+    return self.dataModel.checkmarks;
+}
 @end
 
 @implementation HZYFormView (HZYFormViewStyleSetting)
+- (void)setInputTextAlignment:(NSTextAlignment)alignment {
+    self.dataModel.inputTextAlignment = alignment;
+}
+
 - (void)setCellBackgroundColor:(UIColor *)color {
     self.dataModel.cellBackgroundColor = color;
 }

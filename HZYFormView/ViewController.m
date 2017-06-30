@@ -24,9 +24,14 @@
     HZYFormView *formView = [HZYFormView formViewWithFrame:CGRectOffset(self.view.bounds, 0, 20) sectionRows:@[@1, @2, @1, @1]];
     formView.titles = @[@[@"姓名"], @[@"性别", @"爱好"], @[@"头像"], @[@"自拍"]];
     formView.placeholders = @[@[@"填写姓名"], @[@"选择性别", @"选择爱好（多选）"], @[[UIImage imageNamed:@"lss"]]];
+    [formView configCellForRow:0 inSection:0 settings:^(HZYFormViewCellConfigurator *set) {
+        [set keyboardType:UIKeyboardTypePhonePad];
+        [set placeholder:@"哈哈哈哈😄"];
+    }];
     [formView configCellForRow:0 inSection:1 settings:^(HZYFormViewCellConfigurator *set) {
         [set options:HZYFormViewCellContentSingleSelector | HZYFormViewCellContentInputField | HZYFormViewCellTitleText];
         [set selectList:@[@"男", @"女", @"其他"]];
+        [set height:88];
     }];
     [formView configCellForRow:1 inSection:1 settings:^(HZYFormViewCellConfigurator *set) {
         [set options:HZYFormViewCellContentMultiSelector | HZYFormViewCellContentInputField | HZYFormViewCellTitleText];
@@ -38,7 +43,9 @@
     [formView configCellForRow:0 inSection:3 settings:^(HZYFormViewCellConfigurator *set) {
         [set options:HZYFormViewCellContentMultiPhotoPicker | HZYFormViewCellTitleText];
     }];
-    
+    [formView configSection:1 settings:^(HZYFormViewSectionHeaderConfigurator *set) {
+        [set height:30];
+    }];
     [self.view addSubview:formView];
     self.formView = formView;
     

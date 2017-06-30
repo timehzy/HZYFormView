@@ -41,6 +41,10 @@ extern NSInteger const HZYFormCellSeperatorTag;
 
 @property (nonatomic, assign, getter=isVisible) BOOL visible;
 @property (nonatomic, assign) BOOL shouldShowAnimation;
+@property (nonatomic, assign) BOOL inputUserInteractionEnable;
+@property (nonatomic, assign) UIKeyboardType inputKeyboardType;
+@property (nonatomic, assign) NSTextAlignment inputTextAlignment;
+
 
 @property (nonatomic, assign) HZYFormViewCellOption options;
 @property (nonatomic, assign) HZYFormViewCellOption selectorRelatedView;

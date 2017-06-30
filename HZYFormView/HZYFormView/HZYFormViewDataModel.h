@@ -27,16 +27,6 @@
 - (HZYFormSectionHeaderView *)getSectionHeaderViewForSection:(NSUInteger)section;
 - (void)replaceHeaderView:(HZYFormSectionHeaderView *)headerView forSection:(NSUInteger)section;
 
-- (void)setTitle:(NSString *)title forRow:(NSUInteger)row inSection:(NSUInteger)section;
-- (void)setIcon:(UIImage *)icon forRow:(NSUInteger)row inSection:(NSUInteger)section;
-- (void)setPlaceholder:(id)placeholder forRow:(NSUInteger)row inSection:(NSUInteger)section;
-- (void)setInputText:(NSString *)inputText forRow:(NSUInteger)row inSection:(NSUInteger)section;
-- (void)setDetail:(NSString *)detail forRow:(NSUInteger)row inSection:(NSUInteger)section;
-- (void)setSubDetail:(NSString *)subDetail forRow:(NSUInteger)row inSection:(NSUInteger)section;
-- (void)setPicture:(id)pictures forRow:(NSUInteger)row inSection:(NSUInteger)section;
-- (void)setSelectList:(NSArray *)list forRow:(NSUInteger)row inSection:(NSUInteger)section;
-- (void)setCheckMark:(HZYFormViewCheckmarkState)state forRow:(NSUInteger)row inSection:(NSUInteger)section;
-
 @property (nonatomic, strong) NSMutableArray *titles;
 @property (nonatomic, strong) NSMutableArray *icons;
 @property (nonatomic, strong) NSMutableArray *placeholders;
@@ -46,11 +36,16 @@
 @property (nonatomic, strong) NSMutableArray *pictures;
 @property (nonatomic, strong) NSMutableArray *selectLists;
 @property (nonatomic, strong) NSMutableArray *checkmarks;//@0=normal,@1=selected，@2=disabled
+@property (nonatomic, strong) NSMutableArray *inputUserInteractionEnableArray;
+@property (nonatomic, strong) NSMutableArray *inputKeyboardTypeArray;
+
 
 - (void)setupAllCellValue;
 - (void)setupCellValueForRow:(NSUInteger)row inSection:(NSUInteger)section;
 
-
+@property (nonatomic, strong) UIColor *cellBackgroundColor;
+@property (nonatomic, assign) UIEdgeInsets cellSeperatorInsets;
+@property (nonatomic, strong) UIColor *cellSeperatorColor;
 @property (nonatomic, strong) UIFont *titleFont;
 @property (nonatomic, strong) UIColor *titleColor;
 @property (nonatomic, strong) UIFont *inputFieldFont;
@@ -61,11 +56,5 @@
 @property (nonatomic, strong) UIColor *detailTextColor;
 @property (nonatomic, strong) UIFont *subDetailFont;
 @property (nonatomic, strong) UIColor *subDetailTextColor;
-
-@property (nonatomic, strong) UIColor *cellBackgroundColor;
-@property (nonatomic, assign) UIEdgeInsets cellSeperatorInsets;
-@property (nonatomic, strong) UIColor *cellSeperatorColor;
-
-@property (nonatomic, assign) NSTextAlignment textAlignment;
-
+@property (nonatomic, assign) NSTextAlignment inputTextAlignment;
 @end
