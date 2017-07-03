@@ -52,6 +52,12 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     }
 }
 
+- (void)configCells:(NSArray<NSIndexPath *> *)indexpaths settings:(void (^)(HZYFormViewCellConfigurator *))setting {
+    for (NSIndexPath *indexpath in indexpaths) {
+        [self configCellForRow:indexpath.row inSection:indexpath.section settings:setting];
+    }
+}
+
 - (void)configSection:(NSUInteger)section settings:(void (^)(HZYFormViewSectionHeaderConfigurator *))setting {
     HZYFormViewSectionHeaderConfigurator *setter = [[HZYFormViewSectionHeaderConfigurator alloc] initWithDataModel:self.dataModel forSection:section];
     if (setting) {

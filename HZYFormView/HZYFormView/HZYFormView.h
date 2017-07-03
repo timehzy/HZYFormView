@@ -29,6 +29,8 @@
 
 /// 单独配置一个cell的样式和值
 - (void)configCellForRow:(NSUInteger)row inSection:(NSUInteger)section settings:(void(^)(HZYFormViewCellConfigurator *set))setting;
+/// 同时配置多个cell
+- (void)configCells:(NSArray<NSIndexPath *> *)indexpaths settings:(void(^)(HZYFormViewCellConfigurator *set))setting;
 /// 单独配置一个section header的样式和值
 - (void)configSection:(NSUInteger)section settings:(void(^)(HZYFormViewSectionHeaderConfigurator *set))setting;
 

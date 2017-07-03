@@ -31,7 +31,6 @@
     [formView configCellForRow:0 inSection:1 settings:^(HZYFormViewCellConfigurator *set) {
         [set options:HZYFormViewCellContentSingleSelector | HZYFormViewCellContentInputField | HZYFormViewCellTitleText];
         [set selectList:@[@"男", @"女", @"其他"]];
-        [set height:88];
     }];
     [formView configCellForRow:1 inSection:1 settings:^(HZYFormViewCellConfigurator *set) {
         [set options:HZYFormViewCellContentMultiSelector | HZYFormViewCellContentInputField | HZYFormViewCellTitleText];
@@ -45,6 +44,9 @@
     }];
     [formView configSection:1 settings:^(HZYFormViewSectionHeaderConfigurator *set) {
         [set height:30];
+    }];
+    [formView configCells:@[[NSIndexPath indexPathForRow:0 inSection:1], [NSIndexPath indexPathForRow:1 inSection:1]] settings:^(HZYFormViewCellConfigurator *set) {
+        [set height:88];
     }];
     [self.view addSubview:formView];
     self.formView = formView;
