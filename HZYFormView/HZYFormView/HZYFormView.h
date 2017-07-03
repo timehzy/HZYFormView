@@ -19,6 +19,7 @@
 
 @interface HZYFormView : UIScrollView
 + (instancetype)formViewWithFrame:(CGRect)frame sectionRows:(NSArray<NSNumber *> *)sectionRows;
++ (instancetype)formViewWithOption:(HZYFormViewCellOption)option frame:(CGRect)frame sectionRows:(NSArray<NSNumber *> *)sectionRows;
 
 @property (nonatomic, weak) id<HZYFormViewDelegate> delegate;
 /// 点击return自动输入下一个cell

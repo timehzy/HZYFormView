@@ -28,7 +28,12 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
 @dynamic delegate;
 #pragma mark - public
 + (instancetype)formViewWithFrame:(CGRect)frame sectionRows:(NSArray<NSNumber *> *)sectionRows {
-    HZYFormView *view = [[self alloc]initWithFrame:frame rowsCount:-1 sectionRows:sectionRows];
+    HZYFormView *view = [[self alloc]initWithFrame:frame rowsCount:-1 sectionRows:sectionRows options:HZYFormViewCellOptions];
+    return view;
+}
+
++ (instancetype)formViewWithOption:(HZYFormViewCellOption)option frame:(CGRect)frame sectionRows:(NSArray<NSNumber *> *)sectionRows {
+    HZYFormView *view = [[self alloc]initWithFrame:frame rowsCount:-1 sectionRows:sectionRows options:option];
     return view;
 }
 
@@ -98,10 +103,10 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
 }
 
 #pragma mark - init & lifeCycle
-- (instancetype)initWithFrame:(CGRect)frame rowsCount:(NSInteger)numberOfRow sectionRows:(NSArray<NSNumber *> *)sectionRows{
+- (instancetype)initWithFrame:(CGRect)frame rowsCount:(NSInteger)numberOfRow sectionRows:(NSArray<NSNumber *> *)sectionRows options:(HZYFormViewCellOption)option{
     if (self = [super initWithFrame:frame]) {
         [self initVariable:sectionRows];
-        [self initDefaultViews];
+        [self initDefaultViews:option];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(multiPicPickerDidAddImage:) name:HZYFormCellImageDidAddedNotification object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(multiPicPickerDidDeletedImage:) name:HZYFormCellImageDidDeletedNotification object:nil];
     }
@@ -129,7 +134,7 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     _cellSubviewCreater = [[HZYFormVIewCellSubViewCreater alloc] initWithDataModel:self.dataModel];
 }
 
-- (void)initDefaultViews {
+- (void)initDefaultViews:(HZYFormViewCellOption)options {
     self.backgroundColor = HZYFormViewDefaultBackgroundColor;
     //headerView
     [self addSubview:self.headerView];
@@ -141,7 +146,7 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
         lastCellMaxY += HZYFormViewSectionHeaderHeight;
         //添加cell
         for (NSInteger j=0; j<[self.dataModel getRowCountInSection:i]; j++) {
-            [self createCell:lastCellMaxY cellHeight:HZYFormViewCellHeight forRow:j inSection:i];
+            [self createCell:lastCellMaxY cellHeight:HZYFormViewCellHeight forRow:j inSection:i options:options];
             [self.cellSubviewCreater createCellSubviewsForRow:j inSection:i accessory:nil];
             lastCellMaxY += HZYFormViewCellHeight;
         }
@@ -157,8 +162,9 @@ NSString *const HZYFormCellAccessoryView = @"HZYFormCellAccessoryView";
     self.contentSize = CGSizeMake(self.bounds.size.width, lastCellMaxY);
 }
 
-- (HZYFormViewCell *)createCell:(CGFloat)cellY cellHeight:(CGFloat)cellHeight forRow:(NSUInteger)row inSection:(NSUInteger)section{
+- (HZYFormViewCell *)createCell:(CGFloat)cellY cellHeight:(CGFloat)cellHeight forRow:(NSUInteger)row inSection:(NSUInteger)section options:(HZYFormViewCellOption)options{
     HZYFormViewCell *view = [[HZYFormViewCell alloc]initWithFrame:CGRectMake(0, cellY, self.bounds.size.width, cellHeight)];
+    view.options = options;
     view.backgroundColor = HZYFormViewCellBackgroundColor;
     __weak typeof(view)weakView = view;
     __weak typeof(self)weakSelf = self;
